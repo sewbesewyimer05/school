@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AcademicPro SIMS (.pro.et Deployment)</title>
+    <title>AcademicPro - Student Information & Grade Management System</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -12,8 +12,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- html2pdf for report generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <!-- Supabase JS Client SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -36,6 +34,7 @@
 </head>
 <body class="h-full bg-slate-50 text-slate-800 antialiased flex flex-col">
 
+    <!-- App Container -->
     <div id="app" class="min-h-full flex flex-col">
 
         <!-- Navigation / Header Bar -->
@@ -47,14 +46,10 @@
                     </div>
                     <div>
                         <h1 class="font-bold text-lg leading-tight">AcademicPro SIMS</h1>
-                        <p class="text-xs text-indigo-300" id="headerRoleBadge">Department Head Portal (.pro.et)</p>
+                        <p class="text-xs text-indigo-300" id="headerRoleBadge">Department Head Portal</p>
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <div id="syncStatusBadge" class="hidden sm:flex items-center space-x-1.5 bg-indigo-800 px-3 py-1 rounded-full text-xs text-indigo-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span id="syncStatusText">Synced with Supabase</span>
-                    </div>
                     <div class="text-right hidden sm:block">
                         <p class="text-sm font-medium" id="headerUserName">Admin User</p>
                         <p class="text-xs text-indigo-300" id="headerUserRole">Administrator</p>
@@ -70,7 +65,6 @@
         <!-- Main Content Viewport -->
         <main class="flex-1 flex flex-col">
 
-            <!-- Login View -->
             <div id="loginView" class="flex-1 flex items-center justify-center bg-gradient-to-br from-slate-900 via-indigo-950 to-indigo-900 p-4">
                 <div class="max-w-md w-full bg-white rounded-2xl shadow-2xl overflow-hidden p-8 border border-indigo-100">
                     <div class="text-center mb-8">
@@ -78,7 +72,7 @@
                             <i class="fa-solid fa-school text-3xl"></i>
                         </div>
                         <h2 class="text-2xl font-bold text-slate-900">Academic Portal Login</h2>
-                        <p class="text-sm text-slate-500 mt-1">Secure Supabase Gateway (.pro.et)</p>
+                        <p class="text-sm text-slate-500 mt-1">Select your portal and enter credentials</p>
                     </div>
 
                     <!-- Role Selector Tabs -->
@@ -123,7 +117,6 @@
                 </div>
             </div>
 
-            <!-- Admin Dashboard -->
             <div id="adminDashboard" class="flex-1 flex flex-col hidden bg-slate-100">
                 <!-- Admin Sub-nav Header -->
                 <div class="bg-white border-b border-slate-200 px-6 py-3 flex flex-wrap items-center justify-between gap-4">
@@ -138,7 +131,7 @@
                             <i class="fa-solid fa-school-flag mr-1.5"></i> Classes & Students
                         </button>
                         <button onclick="switchAdminTab('subjects')" id="adminTabBtnSubjects" class="px-3.5 py-2 text-sm font-semibold rounded-lg text-slate-600 hover:bg-slate-50 transition">
-                            <i class="fa-solid fa-book-bookmark mr-1.5"></i> Subjects & Assignments
+                            <i class="fa-solid fa-book-bookmark mr-1.5"></i> Subjects & Teaching Assignments
                         </button>
                         <button onclick="switchAdminTab('reports')" id="adminTabBtnReports" class="px-3.5 py-2 text-sm font-semibold rounded-lg text-slate-600 hover:bg-slate-50 transition">
                             <i class="fa-solid fa-folder-open mr-1.5"></i> Mark Lists
@@ -155,6 +148,7 @@
                     <!-- Tab 1: Faculty Accounts -->
                     <div id="adminTabTeachers" class="tab-content active space-y-6">
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <!-- Create Teacher Form -->
                             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 h-fit">
                                 <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center space-x-2">
                                     <i class="fa-solid fa-user-plus text-indigo-600"></i>
@@ -184,6 +178,7 @@
                                 </form>
                             </div>
 
+                            <!-- Teachers List -->
                             <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col">
                                 <div class="flex items-center justify-between mb-4">
                                     <h3 class="text-lg font-bold text-slate-900 flex items-center space-x-2">
@@ -215,7 +210,9 @@
                     <!-- Tab 2: Classes & Students Management -->
                     <div id="adminTabClasses" class="tab-content space-y-6">
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <!-- Create Class Form & Student Registration Form -->
                             <div class="space-y-6">
+                                <!-- Create Class Form -->
                                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                                     <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center space-x-2">
                                         <i class="fa-solid fa-square-plus text-indigo-600"></i>
@@ -233,6 +230,7 @@
                                     </form>
                                 </div>
 
+                                <!-- Add Student to Class Form -->
                                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                                     <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center space-x-2">
                                         <i class="fa-solid fa-user-plus text-emerald-600"></i>
@@ -270,6 +268,7 @@
                                 </div>
                             </div>
 
+                            <!-- Class Roster & Master Student Explorer -->
                             <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col">
                                 <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
                                     <h3 class="text-lg font-bold text-slate-900 flex items-center space-x-2">
@@ -291,7 +290,7 @@
                                                 <th class="py-3 px-4">Full Name</th>
                                                 <th class="py-3 px-4">Class</th>
                                                 <th class="py-3 px-4">Age / Gender</th>
-                                                <th class="py-3 px-4 text-right">Actions</th>
+                                                <th class="py-3 px-4 text-right">Admin Actions (No Mark Editing)</th>
                                             </tr>
                                         </thead>
                                         <tbody id="adminRosterTableBody" class="divide-y divide-slate-100 text-sm">
@@ -307,6 +306,7 @@
                     <div id="adminTabSubjects" class="tab-content space-y-6">
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                             <div class="space-y-6">
+                                <!-- Create Subject Form -->
                                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                                     <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center space-x-2">
                                         <i class="fa-solid fa-book-open text-indigo-600"></i>
@@ -324,6 +324,7 @@
                                     </form>
                                 </div>
 
+                                <!-- Assign Teacher to Class & Subject -->
                                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                                     <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center space-x-2">
                                         <i class="fa-solid fa-link text-indigo-600"></i>
@@ -356,6 +357,7 @@
                                 </div>
                             </div>
 
+                            <!-- List of Assignments & Subjects -->
                             <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col">
                                 <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center space-x-2">
                                     <i class="fa-solid fa-list-check text-indigo-600"></i>
@@ -380,13 +382,13 @@
                         </div>
                     </div>
 
-                    <!-- Tab 4: Admin View Teacher Mark Lists -->
+                    <!-- Tab 4: Admin View Teacher Mark Lists & Reports -->
                     <div id="adminTabReports" class="tab-content space-y-6">
                         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                             <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
                                 <div>
                                     <h3 class="text-lg font-bold text-slate-900">Submitted Mark Lists & Class Scores</h3>
-                                    <p class="text-sm text-slate-500">Review teacher mark lists (Read-Only Mode with Supabase Audit Verification).</p>
+                                    <p class="text-sm text-slate-500">Review teacher mark lists (Read-Only Mode: Admin cannot edit marks or assessments).</p>
                                 </div>
                                 <div class="flex items-center space-x-3">
                                     <select id="adminFilterTeacher" onchange="renderAdminMarkLists()" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
@@ -421,7 +423,7 @@
                             <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
                                 <div>
                                     <h3 class="text-lg font-bold text-slate-900">Student Comprehensive Report Cards</h3>
-                                    <p class="text-sm text-slate-500">Filter by Class/Grade to aggregate all subject scores and compute official rank.</p>
+                                    <p class="text-sm text-slate-500">Filter by Class/Grade to aggregate all subject scores (e.g., English, Math, Sport) and compute official rank.</p>
                                 </div>
                                 <div class="flex flex-wrap items-center gap-3">
                                     <div>
@@ -439,13 +441,15 @@
                                 </div>
                             </div>
 
+                            <!-- Report Card Preview Box -->
                             <div id="reportCardContainer" class="border border-slate-200 rounded-2xl p-8 bg-white shadow-sm hidden">
                                 <div id="printableReportCard" class="space-y-6 bg-white p-4 border border-slate-100 rounded-xl">
+                                    <!-- Header -->
                                     <div class="border-b-2 border-slate-900 pb-6 flex justify-between items-start">
                                         <div>
                                             <div class="flex items-center space-x-2 text-indigo-700 font-bold text-xl mb-1">
                                                 <i class="fa-solid fa-graduation-cap"></i>
-                                                <span>ፍሬ ቅዱሳን ሰንበት ትምህርት ቤት (.pro.et)</span>
+                                                <span>ፍሬ ቅዱሳን ሰንበት ትምህርት ቤት</span>
                                             </div>
                                             <h2 class="text-2xl font-bold text-slate-900">Official Student Transcripts & Report Card</h2>
                                             <p class="text-sm text-slate-500">Department of Academic Records & Evaluation</p>
@@ -453,10 +457,11 @@
                                         <div class="text-right">
                                             <p class="text-xs font-semibold uppercase text-slate-400">Date Issued</p>
                                             <p class="text-sm font-medium text-slate-700" id="rcIssueDate">-</p>
-                                            <span class="inline-block mt-2 bg-emerald-50 text-emerald-700 text-xs font-bold px-3 py-1 rounded-full border border-emerald-200">Supabase Verified</span>
+                                            <span class="inline-block mt-2 bg-emerald-50 text-emerald-700 text-xs font-bold px-3 py-1 rounded-full border border-emerald-200">Official Record</span>
                                         </div>
                                     </div>
 
+                                    <!-- Student Bio & Class Rank -->
                                     <div class="grid grid-cols-2 md:grid-cols-5 gap-4 bg-slate-50 p-4 rounded-xl text-sm border border-slate-200">
                                         <div>
                                             <span class="block text-xs font-semibold text-slate-400 uppercase">የተማሪው ስም</span>
@@ -480,6 +485,7 @@
                                         </div>
                                     </div>
 
+                                    <!-- Marks Table -->
                                     <div>
                                         <h4 class="font-bold text-slate-900 mb-3 text-sm uppercase tracking-wider">Complete Subject Breakdown</h4>
                                         <table class="w-full text-left border-collapse border border-slate-300 rounded-xl overflow-hidden min-w-full">
@@ -498,10 +504,11 @@
                                         </table>
                                     </div>
 
+                                    <!-- Remarks & Signatures -->
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-slate-200">
                                         <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
                                             <h5 class="font-bold text-xs uppercase text-slate-400 mb-1">Department Head Remarks</h5>
-                                            <p class="text-sm font-medium text-slate-700" id="rcRemarks">Official academic transcript reviewed & secured via PostgreSQL triggers.</p>
+                                            <p class="text-sm font-medium text-slate-700" id="rcRemarks">Official academic transcript reviewed. All reported subject scores compiled.</p>
                                         </div>
                                         <div class="flex flex-col justify-end text-right">
                                             <div class="border-b border-slate-400 w-48 ml-auto mb-2"></div>
@@ -519,6 +526,7 @@
                                 </div>
                             </div>
 
+                            <!-- Empty State for Report Card -->
                             <div id="reportCardEmpty" class="text-center py-12 text-slate-400">
                                 <i class="fa-solid fa-id-card text-4xl mb-3 text-slate-300"></i>
                                 <p class="text-base font-medium">Please select a class and student from the dropdowns above to generate their comprehensive report card.</p>
@@ -529,11 +537,11 @@
                 </div>
             </div>
 
-            <!-- Teacher Dashboard -->
             <div id="teacherDashboard" class="flex-1 flex flex-col hidden bg-slate-100">
+                <!-- Teacher Sub-nav Header -->
                 <div class="bg-white border-b border-slate-200 px-6 py-3 flex flex-wrap items-center justify-between gap-4">
                     <div class="flex items-center space-x-2">
-                        <span class="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Teacher Portal (.pro.et)</span>
+                        <span class="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Teacher Portal</span>
                     </div>
                     <div class="flex space-x-2">
                         <button onclick="switchTeacherTab('marklists')" id="teacherTabBtnMarkLists" class="px-4 py-2 text-sm font-semibold rounded-lg bg-emerald-50 text-emerald-700 transition">
@@ -542,8 +550,10 @@
                     </div>
                 </div>
 
+                <!-- Teacher Tab Contents -->
                 <div class="flex-1 max-w-7xl w-full mx-auto p-6">
                     <div id="teacherTabMarkLists" class="tab-content active space-y-6">
+                        <!-- Mark Lists List for Teacher -->
                         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col">
                             <div class="flex items-center justify-between mb-4">
                                 <div>
@@ -551,7 +561,7 @@
                                         <i class="fa-solid fa-clipboard-list text-emerald-600"></i>
                                         <span>My Assigned Class Mark Lists</span>
                                     </h3>
-                                    <p class="text-xs text-slate-500">Dynamic auto-save queue active for network drop protection.</p>
+                                    <p class="text-xs text-slate-500">Classes and subjects assigned to you by the Department Head. Enter assessments and student scores.</p>
                                 </div>
                                 <span id="teacherMarkListCount" class="bg-emerald-50 text-emerald-700 font-semibold px-3 py-1 rounded-full text-xs">0 Mark Lists</span>
                             </div>
@@ -614,7 +624,7 @@
                 </div>
             </div>
 
-            <!-- EDIT STUDENT DEMOGRAPHICS MODAL -->
+            <!-- EDIT STUDENT DEMOGRAPHICS MODAL (ADMIN ONLY) -->
             <div id="editStudentModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
                 <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-200">
                     <div class="p-6 bg-slate-900 text-white flex items-center justify-between">
@@ -651,7 +661,7 @@
                                 <!-- Populated dynamically -->
                             </select>
                         </div>
-                        <p class="text-xs text-amber-600 bg-amber-50 p-2 rounded-lg border border-amber-100 flex items-center"><i class="fa-solid fa-lock mr-1.5"></i> Audit Notice: Student deletions or modifications are logged automatically via PostgreSQL triggers.</p>
+                        <p class="text-xs text-amber-600 bg-amber-50 p-2 rounded-lg border border-amber-100 flex items-center"><i class="fa-solid fa-lock mr-1.5"></i> Admin Note: You are modifying student record details only. Marks are updated by assigned teachers.</p>
                         <div class="flex justify-end space-x-3 pt-4 border-t border-slate-100">
                             <button type="button" onclick="closeEditStudentModal()" class="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition">Cancel</button>
                             <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2 rounded-xl text-sm transition shadow-md shadow-indigo-100">Save Student Info</button>
@@ -663,6 +673,7 @@
             <!-- MARK LIST DETAILS MODAL -->
             <div id="markListDetailModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
                 <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-slate-200">
+                    <!-- Modal Header -->
                     <div class="p-6 bg-slate-900 text-white flex items-center justify-between">
                         <div>
                             <div class="flex items-center space-x-2">
@@ -670,41 +681,45 @@
                                 <span id="modalReadOnlyNotice" class="bg-amber-500 text-white px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider mb-1 hidden"><i class="fa-solid fa-eye mr-1"></i> Read Only (Admin View)</span>
                             </div>
                             <h3 id="modalMarkListTitle" class="text-xl font-bold">Mark List Title</h3>
-                            <p class="text-xs text-slate-400" id="modalSubHeading">Dynamic weight validation active ($100\%$ limit)</p>
+                            <p class="text-xs text-slate-400" id="modalSubHeading">Teacher manages assessments and enters scores for pre-registered students.</p>
                         </div>
                         <button onclick="closeMarkListModal()" class="text-slate-400 hover:text-white p-2 rounded-lg transition">
                             <i class="fa-solid fa-xmark text-xl"></i>
                         </button>
                     </div>
 
+                    <!-- Modal Body / Content -->
                     <div class="p-6 flex-1 overflow-y-auto space-y-6">
+
+                        <!-- SECTION 1: Assessment Management -->
                         <div id="assessmentSectionContainer" class="bg-slate-50 p-4 rounded-xl border border-slate-200">
                             <div class="flex items-center justify-between mb-3">
                                 <h4 class="text-sm font-bold text-slate-800 flex items-center space-x-2">
                                     <i class="fa-solid fa-sliders text-emerald-600"></i>
-                                    <span>Class Assessments Setup ($100\%$ Maximum Limit)</span>
+                                    <span>Class Assessments Setup</span>
                                 </h4>
                                 <span id="assessmentsTotalWeightBadge" class="text-xs font-bold px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700">Total Max Score: 0 Points</span>
                             </div>
 
+                            <!-- List of existing assessments -->
                             <div id="assessmentsChipsContainer" class="flex flex-wrap gap-2 mb-3">
-                                <!-- Chips -->
+                                <!-- Dynamically populated badges -->
                             </div>
 
+                            <!-- Form to Add Assessment (Hidden for Admin) -->
                             <form id="addAssessmentForm" onsubmit="handleAddAssessment(event)" class="space-y-3 pt-2 border-t border-slate-200">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                                     <div>
                                         <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Assessment Name</label>
-                                        <input type="text" id="newAssessTitle" required placeholder="e.g. Midterm Exam, Quiz 1" class="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                        <input type="text" id="newAssessTitle" required placeholder="e.g. Midterm Exam, Quiz 1, Project" class="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Max Score (Weight)</label>
+                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Max Score</label>
                                         <input type="number" id="newAssessMax" required min="1" max="100" placeholder="e.g. 30" class="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
                                     </div>
                                 </div>
-                                <div class="flex justify-between items-center">
-                                    <p id="weightWarning" class="text-xs text-amber-600 hidden"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Total score exceeds 100 points!</p>
-                                    <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white font-semibold px-4 py-1.5 rounded-lg text-sm transition flex items-center space-x-1.5 ml-auto">
+                                <div class="flex justify-end">
+                                    <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white font-semibold px-4 py-1.5 rounded-lg text-sm transition flex items-center space-x-1.5">
                                         <i class="fa-solid fa-plus text-xs"></i>
                                         <span>Add Assessment Column</span>
                                     </button>
@@ -712,19 +727,18 @@
                             </form>
                         </div>
 
-                        <div id="autoSaveIndicator" class="bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs p-3 rounded-xl flex items-center justify-between">
-                            <div class="flex items-center space-x-2">
-                                <i class="fa-solid fa-cloud text-emerald-600 text-base"></i>
-                                <span><strong>Auto-Save Queue Active:</strong> Changes are saved locally and synced with Supabase state.</span>
-                            </div>
-                            <span id="lastSavedTimestamp" class="font-mono text-emerald-600">Saved just now</span>
+                        <!-- Info Banner for Teacher Student Lock -->
+                        <div id="teacherLockNotice" class="bg-blue-50 border border-blue-200 text-blue-800 text-xs p-3 rounded-xl flex items-center space-x-2">
+                            <i class="fa-solid fa-circle-info text-blue-600 text-base"></i>
+                            <span><strong>Roster Note:</strong> Student roster is managed by the Department Head. Teachers enter marks for assigned assessments.</span>
                         </div>
 
+                        <!-- SECTION 2: Dynamic Students Grade Table -->
                         <div class="overflow-x-auto border border-slate-200 rounded-xl">
                             <table class="w-full text-left border-collapse">
                                 <thead>
                                     <tr id="modalStudentsTableHeader" class="bg-slate-100 border-b border-slate-200 text-xs font-semibold text-slate-600 uppercase">
-                                        <!-- Dynamically generated -->
+                                        <!-- Dynamically generated headers for Name, Assessments, Total, Grade -->
                                     </tr>
                                 </thead>
                                 <tbody id="modalStudentsTableBody" class="divide-y divide-slate-100 text-sm bg-white">
@@ -734,6 +748,7 @@
                         </div>
                     </div>
 
+                    <!-- Modal Footer -->
                     <div class="p-4 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-between gap-4">
                         <div class="flex items-center space-x-2">
                             <span id="modalReportStatusBadge" class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-50 text-amber-700">Draft / Not Reported</span>
@@ -752,7 +767,7 @@
                 </div>
             </div>
 
-            <!-- PRINTABLE MARK LIST HIDDEN CONTAINER -->
+            <!-- PRINTABLE MARK LIST HIDDEN CONTAINER FOR PDF GENERATION -->
             <div id="printableMarkListArea" class="hidden p-8 bg-white text-slate-800">
                 <div class="border-b pb-4 mb-6 flex justify-between items-center">
                     <div>
@@ -783,161 +798,91 @@
     </div>
 
     <script>
-        // Supabase Client Initialization (.pro.et deployment config)
-        // REPLACE WITH YOUR ACTUAL SUPABASE URL AND REAL PUBLIC ANON KEY FROM SUPABASE DASHBOARD
-        const SUPABASE_URL = 'https://sqwhsgfmbvgdkclgfpmy.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNxd2hzZ2ZtYnZnZGtjbGdmcG15Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5NDU0ODksImV4cCI6MjEwNzUyMTQ4OX0.bG6vIgdVirYcGmh0GfBFfrVFcBIK5abqVWGS6pS3RhA'; 
-        
-        let supabaseClient = null;
-        try {
-            if (window.supabase && SUPABASE_ANON_KEY !== 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNxd2hzZ2ZtYnZnZGtjbGdmcG15Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5NDU0ODksImV4cCI6MjEwNzUyMTQ4OX0.bG6vIgdVirYcGmh0GfBFfrVFcBIK5abqVWGS6pS3RhA') {
-                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            }
-        } catch (err) {
-            console.warn('Supabase offline fallback mode active.', err);
-        }
-
-        // Global State Management with Supabase & Local Cache
+        // Global State Management
         let appState = {
             currentUser: null,
-            classes: [],
-            subjects: [],
-            students: [],
-            teachers: [],
-            teachingAssignments: [],
-            markLists: [],
+            classes: [
+                { id: 'c1', name: 'Grade 1' },
+                { id: 'c2', name: 'Grade 2' }
+            ],
+            subjects: [
+                { id: 'sub1', name: 'English' },
+                { id: 'sub2', name: 'Math' },
+                { id: 'sub3', name: 'Sport' }
+            ],
+            students: [
+                { id: 's1', classId: 'c1', name: 'Solomon Abebe', age: 7, gender: 'Male' },
+                { id: 's2', classId: 'c1', name: 'Bethelhem Tadesse', age: 7, gender: 'Female' },
+                { id: 's3', classId: 'c2', name: 'Dawit Yohannes', age: 8, gender: 'Male' }
+            ],
+            teachers: [
+                { id: 't1', name: 'Dr. Alan Turing', subject: 'Science', username: 'aturing', password: 'password123' },
+                { id: 't2', name: 'Prof. Marie Curie', subject: 'Math', username: 'mcurie', password: 'password123' }
+            ],
+            teachingAssignments: [
+                { id: 'ta1', classId: 'c1', subjectId: 'sub1', subjectName: 'English', teacherId: 't1', teacherName: 'Dr. Alan Turing' },
+                { id: 'ta2', classId: 'c1', subjectId: 'sub2', subjectName: 'Math', teacherId: 't2', teacherName: 'Prof. Marie Curie' },
+                { id: 'ta3', classId: 'c1', subjectId: 'sub3', subjectName: 'Sport', teacherId: 't1', teacherName: 'Dr. Alan Turing' }
+            ],
+            markLists: [
+                {
+                    id: 'ml_c1_sub1',
+                    assignmentId: 'ta1',
+                    classId: 'c1',
+                    className: 'Grade 1',
+                    subjectName: 'English',
+                    teacherId: 't1',
+                    teacherName: 'Dr. Alan Turing',
+                    reported: true,
+                    assessments: [
+                        { id: 'a1', title: 'Quiz 1', maxMark: 20 },
+                        { id: 'a2', title: 'Midterm', maxMark: 30 },
+                        { id: 'a3', title: 'Final Exam', maxMark: 50 }
+                    ],
+                    grades: {
+                        's1': { marks: { a1: 18, a2: 28, a3: 46 }, customGrade: 'A+' },
+                        's2': { marks: { a1: 15, a2: 23, a3: 40 }, customGrade: 'B+' }
+                    }
+                },
+                {
+                    id: 'ml_c1_sub2',
+                    assignmentId: 'ta2',
+                    classId: 'c1',
+                    className: 'Grade 1',
+                    subjectName: 'Math',
+                    teacherId: 't2',
+                    teacherName: 'Prof. Marie Curie',
+                    reported: true,
+                    assessments: [
+                        { id: 'a1', title: 'Class Test', maxMark: 40 },
+                        { id: 'a2', title: 'Final Exam', maxMark: 60 }
+                    ],
+                    grades: {
+                        's1': { marks: { a1: 36, a2: 52 }, customGrade: 'A' },
+                        's2': { marks: { a1: 30, a2: 45 }, customGrade: 'B+' }
+                    }
+                }
+            ],
             activeMarkListId: null
         };
 
-        // Load data from Supabase on startup, fallback to localStorage if offline
-        async function loadStateFromSupabase() {
-            if (!supabaseClient) {
-                loadStateLocal();
-                return;
-            }
-
-            try {
-                const [
-                    { data: teachers, error: tErr },
-                    { data: classes, error: cErr },
-                    { data: students, error: sErr },
-                    { data: subjects, error: subErr },
-                    { data: teachingAssignments, error: taErr },
-                    { data: markLists, error: mlErr }
-                ] = await Promise.all([
-                    supabaseClient.from('teachers').select('*'),
-                    supabaseClient.from('classes').select('*'),
-                    supabaseClient.from('students').select('*'),
-                    supabaseClient.from('subjects').select('*'),
-                    supabaseClient.from('teaching_assignments').select('*'),
-                    supabaseClient.from('mark_lists').select('*')
-                ]);
-
-                if (teachers && teachers.length > 0) appState.teachers = teachers;
-                if (classes && classes.length > 0) appState.classes = classes;
-                if (students && students.length > 0) appState.students = students;
-                if (subjects && subjects.length > 0) appState.subjects = subjects;
-                if (teachingAssignments && teachingAssignments.length > 0) {
-                    appState.teachingAssignments = teachingAssignments.map(ta => ({
-                        id: ta.id,
-                        classId: ta.class_id,
-                        subjectId: ta.subject_id,
-                        subjectName: appState.subjects.find(s => s.id === ta.subject_id)?.name || 'Subject',
-                        teacherId: ta.teacher_id,
-                        teacherName: appState.teachers.find(t => t.id === ta.teacher_id)?.name || 'Teacher'
-                    }));
-                }
-                
-                if (markLists && markLists.length > 0) {
-                    appState.markLists = markLists.map(ml => ({
-                        id: ml.id,
-                        assignmentId: ml.assignment_id,
-                        classId: ml.class_id,
-                        className: appState.classes.find(c => c.id === ml.class_id)?.name || 'Class',
-                        subjectName: ml.subject_name,
-                        teacherId: ml.teacher_id,
-                        teacherName: ml.teacher_name,
-                        reported: ml.reported,
-                        assessments: ml.assessments || [],
-                        grades: ml.grades || {}
-                    }));
-                }
-
-                // If remote database is empty, seed with initial defaults and save to DB
-                if (appState.classes.length === 0 && appState.teachers.length === 0) {
-                    await seedInitialData();
-                }
-
-                document.getElementById('syncStatusText').textContent = 'Synced with Supabase';
-                console.log('Successfully synced state from Supabase across devices!');
-            } catch (err) {
-                console.warn('Failed to load from Supabase, using local cache:', err);
-                loadStateLocal();
-                document.getElementById('syncStatusText').textContent = 'Offline (Local Cache)';
-            }
-        }
-
-        async function seedInitialData() {
-            if (!supabaseClient) return;
-            // Seed initial class & teacher if needed
-            const { data: cData } = await supabaseClient.from('classes').insert([{ name: 'Grade 1' }, { name: 'Grade 2' }]).select();
-            const { data: tData } = await supabaseClient.from('teachers').insert([
-                { name: 'Dr. Alan Turing', subject: 'Science', username: 'aturing', password: 'password123' },
-                { name: 'Prof. Marie Curie', subject: 'Math', username: 'mcurie', password: 'password123' }
-            ]).select();
-            const { data: sData } = await supabaseClient.from('subjects').insert([{ name: 'English' }, { name: 'Math' }, { name: 'Sport' }]).select();
-            if (cData && tData && sData) {
-                appState.classes = cData;
-                appState.teachers = tData;
-                appState.subjects = sData;
-            }
-        }
-
-        function loadStateLocal() {
-            const saved = localStorage.getItem('academic_sims_state_pro_v3');
+        // State Persistence
+        function loadState() {
+            const saved = localStorage.getItem('academic_sims_state_v2');
             if (saved) {
                 try {
                     appState = JSON.parse(saved);
                 } catch (e) {
-                    console.error('Failed to parse saved state', e);
+                    console.error('Failed to load saved state', e);
                 }
             }
         }
 
-        async function saveState() {
-            localStorage.setItem('academic_sims_state_pro_v3', JSON.stringify(appState));
-            const ts = document.getElementById('lastSavedTimestamp');
-            if (ts) {
-                ts.textContent = `Saved at ${new Date().toLocaleTimeString()}`;
-            }
-
-            // Sync active mark list to Supabase
-            if (supabaseClient && appState.activeMarkListId) {
-                const ml = appState.markLists.find(m => m.id === appState.activeMarkListId);
-                if (ml) {
-                    const { error } = await supabaseClient
-                        .from('mark_lists')
-                        .upsert({
-                            id: ml.id,
-                            assignment_id: ml.assignmentId,
-                            class_id: ml.classId,
-                            subject_name: ml.subjectName,
-                            teacher_id: ml.teacherId,
-                            teacher_name: ml.teacherName,
-                            reported: ml.reported,
-                            assessments: ml.assessments,
-                            grades: ml.grades,
-                            updated_at: new Date().toISOString()
-                        });
-                    
-                    if (error) {
-                        console.warn('Supabase mark list sync warning:', error.message);
-                    }
-                }
-            }
+        function saveState() {
+            localStorage.setItem('academic_sims_state_v2', JSON.stringify(appState));
         }
 
-        // Authentication & View Routing
+        // Authentication & Views
         function checkAuthView() {
             const loginView = document.getElementById('loginView');
             const mainHeader = document.getElementById('mainHeader');
@@ -954,10 +899,11 @@
 
             loginView.classList.add('hidden');
             mainHeader.classList.remove('hidden');
+
             document.getElementById('headerUserName').textContent = appState.currentUser.name;
 
             if (appState.currentUser.role === 'admin') {
-                document.getElementById('headerUserRole').textContent = 'Administrator (.pro.et)';
+                document.getElementById('headerUserRole').textContent = 'Administrator';
                 document.getElementById('headerRoleBadge').textContent = 'Department Head Portal';
                 adminDashboard.classList.remove('hidden');
                 teacherDashboard.classList.add('hidden');
@@ -968,8 +914,8 @@
                 renderAdminMarkLists();
                 populateReportCardDropdowns();
             } else {
-                document.getElementById('headerUserRole').textContent = 'Faculty Teacher';
-                document.getElementById('headerRoleBadge').textContent = 'Teacher Portal (.pro.et)';
+                document.getElementById('headerUserRole').textContent = `Faculty Teacher`;
+                document.getElementById('headerRoleBadge').textContent = 'Teacher Portal';
                 adminDashboard.classList.add('hidden');
                 teacherDashboard.classList.remove('hidden');
                 renderTeacherMarkLists();
@@ -991,12 +937,12 @@
             } else {
                 btnTeacher.className = "flex-1 py-2 text-sm font-semibold rounded-lg bg-white text-indigo-600 shadow-sm transition";
                 btnAdmin.className = "flex-1 py-2 text-sm font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition";
-                usernameInput.value = appState.teachers[0] ? appState.teachers[0].username : 'aturing';
+                usernameInput.value = 'aturing';
                 passwordInput.value = 'password123';
             }
         }
 
-        async function handleLogin(e) {
+        function handleLogin(e) {
             e.preventDefault();
             const role = document.getElementById('selectedRole').value;
             const u = document.getElementById('loginUsername').value.trim();
@@ -1017,16 +963,6 @@
                     appState.currentUser = { id: teacher.id, name: teacher.name, role: 'teacher' };
                     errorDiv.classList.add('hidden');
                     checkAuthView();
-
-                    if (supabaseClient) {
-                        await supabaseClient.from('audit_logs').insert([{
-                            action_type: 'LOGIN',
-                            table_name: 'teachers',
-                            record_id: teacher.id,
-                            performed_by: teacher.username,
-                            details: 'Teacher logged into session on .pro.et'
-                        }]);
-                    }
                 } else {
                     errorDiv.classList.remove('hidden');
                 }
@@ -1038,7 +974,7 @@
             checkAuthView();
         }
 
-        // Grading Helpers & Weight Validator
+        // Helpers
         function getLetterGrade(mark) {
             const num = parseFloat(mark) || 0;
             if (num >= 90) return 'A+';
@@ -1054,11 +990,11 @@
 
         function getGradeBadgeClass(grade) {
             if (!grade) grade = 'F';
-            const clean = grade.trim().toUpperCase();
-            if (clean.startsWith('A')) return 'bg-emerald-100 text-emerald-800';
-            if (clean.startsWith('B')) return 'bg-blue-100 text-blue-800';
-            if (clean.startsWith('C')) return 'bg-amber-100 text-amber-800';
-            if (clean.startsWith('D')) return 'bg-orange-100 text-orange-800';
+            const cleanGrade = grade.trim().toUpperCase();
+            if (cleanGrade.startsWith('A')) return 'bg-emerald-100 text-emerald-800';
+            if (cleanGrade.startsWith('B')) return 'bg-blue-100 text-blue-800';
+            if (cleanGrade.startsWith('C')) return 'bg-amber-100 text-amber-800';
+            if (cleanGrade.startsWith('D')) return 'bg-orange-100 text-orange-800';
             return 'bg-red-100 text-red-800';
         }
 
@@ -1067,7 +1003,8 @@
             const sGradeData = markList.grades ? markList.grades[studentId] : null;
             if (sGradeData && sGradeData.marks && markList.assessments) {
                 markList.assessments.forEach(ass => {
-                    total += parseFloat(sGradeData.marks[ass.id]) || 0;
+                    const score = parseFloat(sGradeData.marks[ass.id]) || 0;
+                    total += score;
                 });
             }
             const mark = Math.round(total * 100) / 100;
@@ -1105,11 +1042,13 @@
         }
 
         function switchTeacherTab(tabName) {
-            if (tabName === 'marklists') renderTeacherMarkLists();
+            if (tabName === 'marklists') {
+                renderTeacherMarkLists();
+            }
         }
 
-        // Teacher Management (with Supabase sync)
-        async function handleCreateTeacher(e) {
+        // Admin: Teacher Account Management
+        function handleCreateTeacher(e) {
             e.preventDefault();
             const name = document.getElementById('newTeacherName').value.trim();
             const subject = document.getElementById('newTeacherSubject').value.trim();
@@ -1117,35 +1056,19 @@
             const password = document.getElementById('newTeacherPassword').value.trim();
 
             if (appState.teachers.some(t => t.username === username)) {
-                alert('Username already exists.');
+                alert('Username already exists. Please choose a different username.');
                 return;
             }
 
-            const newTeacherObj = { name, subject, username, password };
-
-            if (supabaseClient) {
-                const { data, error } = await supabaseClient.from('teachers').insert([newTeacherObj]).select();
-                if (error) {
-                    alert('Error saving to Supabase: ' + error.message);
-                    return;
-                }
-                if (data && data[0]) {
-                    appState.teachers.push(data[0]);
-                }
-            } else {
-                appState.teachers.push({ id: 't_' + Date.now(), ...newTeacherObj });
-            }
-
+            const newTeacher = { id: 't_' + Date.now(), name, subject, username, password };
+            appState.teachers.push(newTeacher);
             saveState();
             renderAdminTeachers();
             e.target.reset();
         }
 
-        async function deleteTeacher(teacherId) {
+        function deleteTeacher(teacherId) {
             if (confirm('Are you sure you want to delete this teacher account?')) {
-                if (supabaseClient) {
-                    await supabaseClient.from('teachers').delete().eq('id', teacherId);
-                }
                 appState.teachers = appState.teachers.filter(t => t.id !== teacherId);
                 appState.teachingAssignments = appState.teachingAssignments.filter(ta => ta.teacherId !== teacherId);
                 saveState();
@@ -1169,28 +1092,33 @@
             document.getElementById('editTeacherModal').classList.add('hidden');
         }
 
-        async function handleSaveEditedTeacher(e) {
+        function handleSaveEditedTeacher(e) {
             e.preventDefault();
             const id = document.getElementById('editTeacherId').value;
             const t = appState.teachers.find(item => item.id === id);
             if (!t) return;
 
+            const username = document.getElementById('editTeacherUsername').value.trim();
+            if (appState.teachers.some(item => item.username === username && item.id !== id)) {
+                alert('Username is already taken by another teacher.');
+                return;
+            }
+
             t.name = document.getElementById('editTeacherName').value.trim();
             t.subject = document.getElementById('editTeacherSubject').value.trim();
-            t.username = document.getElementById('editTeacherUsername').value.trim();
+            t.username = username;
             t.password = document.getElementById('editTeacherPassword').value.trim();
 
-            if (supabaseClient) {
-                await supabaseClient.from('teachers').update({
-                    name: t.name,
-                    subject: t.subject,
-                    username: t.username,
-                    password: t.password
-                }).eq('id', id);
-            }
+            appState.teachingAssignments.forEach(ta => {
+                if (ta.teacherId === id) ta.teacherName = t.name;
+            });
+            appState.markLists.forEach(ml => {
+                if (ml.teacherId === id) ml.teacherName = t.name;
+            });
 
             saveState();
             renderAdminTeachers();
+            renderAdminSubjectsTable();
             closeEditTeacherModal();
         }
 
@@ -1198,6 +1126,11 @@
             const tbody = document.getElementById('adminTeachersTableBody');
             tbody.innerHTML = '';
             document.getElementById('teacherCountBadge').textContent = `${appState.teachers.length} Teachers`;
+
+            if (appState.teachers.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-slate-400">No teachers registered yet.</td></tr>`;
+                return;
+            }
 
             appState.teachers.forEach(t => {
                 const assignCount = appState.teachingAssignments.filter(ta => ta.teacherId === t.id).length;
@@ -1217,61 +1150,40 @@
             });
         }
 
-        // Class & Student Management (with Supabase sync)
-        async function handleCreateClass(e) {
+        // Admin: Class & Student Management
+        function handleCreateClass(e) {
             e.preventDefault();
             const name = document.getElementById('newClassName').value.trim();
-            let newClassObj = { name };
-
-            if (supabaseClient) {
-                const { data, error } = await supabaseClient.from('classes').insert([newClassObj]).select();
-                if (error) {
-                    alert('Error creating class in Supabase: ' + error.message);
-                    return;
-                }
-                if (data && data[0]) appState.classes.push(data[0]);
-            } else {
-                appState.classes.push({ id: 'c_' + Date.now(), name });
+            if (appState.classes.some(c => c.name.toLowerCase() === name.toLowerCase())) {
+                alert('Class with this title already exists.');
+                return;
             }
-
+            const newClass = { id: 'c_' + Date.now(), name };
+            appState.classes.push(newClass);
             saveState();
             renderAdminClassesDropdowns();
             e.target.reset();
         }
 
-        async function handleRegisterStudent(e) {
+        function handleRegisterStudent(e) {
             e.preventDefault();
-            const class_id = document.getElementById('regStudentClassSelect').value;
+            const classId = document.getElementById('regStudentClassSelect').value;
             const name = document.getElementById('regStudentName').value.trim();
             const age = parseInt(document.getElementById('regStudentAge').value) || 7;
             const gender = document.getElementById('regStudentGender').value;
 
-            const studentObj = { class_id, name, age, gender };
+            if (!classId) return;
 
-            if (supabaseClient) {
-                const { data, error } = await supabaseClient.from('students').insert([studentObj]).select();
-                if (error) {
-                    alert('Error registering student in Supabase: ' + error.message);
-                    return;
-                }
-                if (data && data[0]) {
-                    appState.students.push({ id: data[0].id, classId: data[0].class_id, name: data[0].name, age: data[0].age, gender: data[0].gender });
-                }
-            } else {
-                appState.students.push({ id: 's_' + Date.now(), classId: class_id, name, age, gender });
-            }
-
+            const newStudent = { id: 's_' + Date.now(), classId, name, age, gender };
+            appState.students.push(newStudent);
             saveState();
             renderAdminRosterTable();
             populateReportCardDropdowns();
             e.target.reset();
         }
 
-        async function deleteStudent(studentId) {
-            if (confirm('Are you sure you want to remove this student?')) {
-                if (supabaseClient) {
-                    await supabaseClient.from('students').delete().eq('id', studentId);
-                }
+        function deleteStudent(studentId) {
+            if (confirm('Are you sure you want to remove this student from the roster?')) {
                 appState.students = appState.students.filter(s => s.id !== studentId);
                 saveState();
                 renderAdminRosterTable();
@@ -1282,6 +1194,7 @@
         function openEditStudentModal(studentId) {
             const s = appState.students.find(item => item.id === studentId);
             if (!s) return;
+
             document.getElementById('editStudentId').value = s.id;
             document.getElementById('editStudentName').value = s.name;
             document.getElementById('editStudentAge').value = s.age;
@@ -1290,7 +1203,11 @@
             const select = document.getElementById('editStudentClass');
             select.innerHTML = '';
             appState.classes.forEach(c => {
-                select.innerHTML += `<option value="${c.id}" ${c.id === s.classId ? 'selected' : ''}>${c.name}</option>`;
+                const opt = document.createElement('option');
+                opt.value = c.id;
+                opt.textContent = c.name;
+                if (c.id === s.classId) opt.selected = true;
+                select.appendChild(opt);
             });
 
             document.getElementById('editStudentModal').classList.remove('hidden');
@@ -1300,40 +1217,36 @@
             document.getElementById('editStudentModal').classList.add('hidden');
         }
 
-        async function handleSaveEditedStudent(e) {
+        function handleSaveEditedStudent(e) {
             e.preventDefault();
             const id = document.getElementById('editStudentId').value;
             const s = appState.students.find(item => item.id === id);
             if (!s) return;
+
             s.name = document.getElementById('editStudentName').value.trim();
             s.age = parseInt(document.getElementById('editStudentAge').value) || s.age;
             s.gender = document.getElementById('editStudentGender').value;
             s.classId = document.getElementById('editStudentClass').value;
 
-            if (supabaseClient) {
-                await supabaseClient.from('students').update({
-                    name: s.name,
-                    age: s.age,
-                    gender: s.gender,
-                    class_id: s.classId
-                }).eq('id', id);
-            }
-
             saveState();
             renderAdminRosterTable();
+            populateReportCardDropdowns();
             closeEditStudentModal();
         }
 
         function renderAdminClassesDropdowns() {
-            ['regStudentClassSelect', 'adminRosterClassFilter', 'assignClassSelect'].forEach(id => {
-                const el = document.getElementById(id);
-                if (!el) return;
-                const val = el.value;
-                el.innerHTML = id === 'adminRosterClassFilter' ? '<option value="">All Classes</option>' : '<option value="">-- Choose Class --</option>';
-                appState.classes.forEach(c => {
-                    el.innerHTML += `<option value="${c.id}">${c.name}</option>`;
-                });
-                el.value = val;
+            const selectReg = document.getElementById('regStudentClassSelect');
+            const selectFilter = document.getElementById('adminRosterClassFilter');
+            const selectAssign = document.getElementById('assignClassSelect');
+
+            selectReg.innerHTML = '<option value="">-- Choose Class --</option>';
+            selectFilter.innerHTML = '<option value="">All Classes</option>';
+            selectAssign.innerHTML = '<option value="">-- Choose Class --</option>';
+
+            appState.classes.forEach(c => {
+                selectReg.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+                selectFilter.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+                selectAssign.innerHTML += `<option value="${c.id}">${c.name}</option>`;
             });
         }
 
@@ -1343,97 +1256,87 @@
             tbody.innerHTML = '';
 
             let list = appState.students;
-            if (filterClassId) list = list.filter(s => s.classId === filterClassId);
+            if (filterClassId) {
+                list = list.filter(s => s.classId === filterClassId);
+            }
+
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-slate-400">No students registered in roster.</td></tr>`;
+                return;
+            }
 
             list.forEach(s => {
                 const cObj = appState.classes.find(c => c.id === s.classId);
+                const className = cObj ? cObj.name : 'Unassigned';
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition";
                 tr.innerHTML = `
                     <td class="py-3 px-4 font-mono text-xs text-slate-400">${s.id}</td>
                     <td class="py-3 px-4 font-semibold text-slate-900">${s.name}</td>
-                    <td class="py-3 px-4 text-indigo-700 font-medium">${cObj ? cObj.name : 'Unassigned'}</td>
+                    <td class="py-3 px-4 text-indigo-700 font-medium">${className}</td>
                     <td class="py-3 px-4 text-slate-600">${s.age} yrs / ${s.gender}</td>
                     <td class="py-3 px-4 text-right space-x-2">
-                        <button onclick="openEditStudentModal('${s.id}')" class="text-indigo-600 hover:text-indigo-800 p-1.5 rounded-lg transition"><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button onclick="deleteStudent('${s.id}')" class="text-red-500 hover:text-red-700 p-1.5 rounded-lg transition"><i class="fa-solid fa-trash"></i></button>
+                        <button onclick="openEditStudentModal('${s.id}')" class="text-indigo-600 hover:text-indigo-800 p-1.5 rounded-lg transition" title="Edit Student Info"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="deleteStudent('${s.id}')" class="text-red-500 hover:text-red-700 p-1.5 rounded-lg transition" title="Remove Student"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        // Subjects & Assignments (with Supabase sync)
-        async function handleCreateSubject(e) {
+        // Admin: Subjects & Assignments Management
+        function handleCreateSubject(e) {
             e.preventDefault();
             const name = document.getElementById('newSubjectName').value.trim();
-
-            if (supabaseClient) {
-                const { data, error } = await supabaseClient.from('subjects').insert([{ name }]).select();
-                if (error) {
-                    alert('Error creating subject in Supabase: ' + error.message);
-                    return;
-                }
-                if (data && data[0]) appState.subjects.push(data[0]);
-            } else {
-                appState.subjects.push({ id: 'sub_' + Date.now(), name });
+            if (appState.subjects.some(s => s.name.toLowerCase() === name.toLowerCase())) {
+                alert('Subject already exists.');
+                return;
             }
-
+            const newSub = { id: 'sub_' + Date.now(), name };
+            appState.subjects.push(newSub);
             saveState();
             renderAdminSubjectsTable();
             e.target.reset();
         }
 
-        async function handleAssignTeacherSubject(e) {
+        function handleAssignTeacherSubject(e) {
             e.preventDefault();
-            const teacher_id = document.getElementById('assignTeacherSelect').value;
-            const class_id = document.getElementById('assignClassSelect').value;
-            const subject_id = document.getElementById('assignSubjectSelect').value;
+            const teacherId = document.getElementById('assignTeacherSelect').value;
+            const classId = document.getElementById('assignClassSelect').value;
+            const subjectId = document.getElementById('assignSubjectSelect').value;
 
-            const tObj = appState.teachers.find(t => t.id === teacher_id);
-            const cObj = appState.classes.find(c => c.id === class_id);
-            const sObj = appState.subjects.find(s => s.id === subject_id);
+            if (!teacherId || !classId || !subjectId) return;
 
-            let newAssignment = { class_id, subject_id, teacher_id };
+            const tObj = appState.teachers.find(t => t.id === teacherId);
+            const cObj = appState.classes.find(c => c.id === classId);
+            const sObj = appState.subjects.find(s => s.id === subjectId);
 
-            if (supabaseClient) {
-                const { data, error } = await supabaseClient.from('teaching_assignments').insert([newAssignment]).select();
-                if (error) {
-                    alert('Error creating assignment in Supabase: ' + error.message);
-                    return;
-                }
-                if (data && data[0]) {
-                    newAssignment = {
-                        id: data[0].id,
-                        classId: data[0].class_id,
-                        subjectId: data[0].subject_id,
-                        subjectName: sObj.name,
-                        teacherId: data[0].teacher_id,
-                        teacherName: tObj.name
-                    };
-                }
-            } else {
-                newAssignment = {
-                    id: 'ta_' + Date.now(),
-                    classId: class_id,
-                    subjectId: subject_id,
-                    subjectName: sObj.name,
-                    teacherId: teacher_id,
-                    teacherName: tObj.name
-                };
+            if (appState.teachingAssignments.some(ta => ta.classId === classId && ta.subjectId === subjectId)) {
+                alert(`Subject "${sObj.name}" in class "${cObj.name}" is already assigned to a teacher.`);
+                return;
             }
+
+            const newAssignment = {
+                id: 'ta_' + Date.now(),
+                classId,
+                subjectId,
+                subjectName: sObj.name,
+                teacherId,
+                teacherName: tObj.name
+            };
 
             appState.teachingAssignments.push(newAssignment);
 
-            const mlId = `ml_${class_id}_${subject_id}`;
+            // Create corresponding marklist container if missing
+            const mlId = `ml_${classId}_${subjectId}`;
             if (!appState.markLists.some(m => m.id === mlId)) {
                 appState.markLists.push({
                     id: mlId,
                     assignmentId: newAssignment.id,
-                    classId: class_id,
+                    classId,
                     className: cObj.name,
                     subjectName: sObj.name,
-                    teacherId: teacher_id,
+                    teacherId,
                     teacherName: tObj.name,
                     reported: false,
                     assessments: [
@@ -1444,15 +1347,13 @@
                     grades: {}
                 });
             }
+
             saveState();
             renderAdminSubjectsTable();
         }
 
-        async function deleteAssignment(assignmentId) {
-            if (confirm('Remove assignment?')) {
-                if (supabaseClient) {
-                    await supabaseClient.from('teaching_assignments').delete().eq('id', assignmentId);
-                }
+        function deleteAssignment(assignmentId) {
+            if (confirm('Are you sure you want to remove this teaching assignment?')) {
                 appState.teachingAssignments = appState.teachingAssignments.filter(ta => ta.id !== assignmentId);
                 saveState();
                 renderAdminSubjectsTable();
@@ -1462,91 +1363,129 @@
         function renderAdminSubjectsTable() {
             const selectTeacher = document.getElementById('assignTeacherSelect');
             const selectSub = document.getElementById('assignSubjectSelect');
-            if (selectTeacher) {
-                selectTeacher.innerHTML = '<option value="">-- Choose Teacher --</option>';
-                appState.teachers.forEach(t => selectTeacher.innerHTML += `<option value="${t.id}">${t.name}</option>`);
-            }
-            if (selectSub) {
-                selectSub.innerHTML = '<option value="">-- Choose Subject --</option>';
-                appState.subjects.forEach(s => selectSub.innerHTML += `<option value="${s.id}">${s.name}</option>`);
-            }
+
+            selectTeacher.innerHTML = '<option value="">-- Choose Teacher --</option>';
+            appState.teachers.forEach(t => selectTeacher.innerHTML += `<option value="${t.id}">${t.name} (${t.subject})</option>`);
+
+            selectSub.innerHTML = '<option value="">-- Choose Subject --</option>';
+            appState.subjects.forEach(s => selectSub.innerHTML += `<option value="${s.id}">${s.name}</option>`);
 
             const tbody = document.getElementById('adminAssignmentsTableBody');
-            if (!tbody) return;
             tbody.innerHTML = '';
+
+            if (appState.teachingAssignments.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-slate-400">No teaching assignments created yet.</td></tr>`;
+                return;
+            }
+
             appState.teachingAssignments.forEach(ta => {
                 const cObj = appState.classes.find(c => c.id === ta.classId);
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50 transition">
-                        <td class="py-3 px-4 font-semibold text-slate-900">${cObj ? cObj.name : ''}</td>
-                        <td class="py-3 px-4 text-indigo-700 font-semibold">${ta.subjectName}</td>
-                        <td class="py-3 px-4 text-slate-700">${ta.teacherName}</td>
-                        <td class="py-3 px-4 text-right"><button onclick="deleteAssignment('${ta.id}')" class="text-red-500 p-1.5"><i class="fa-solid fa-trash"></i></button></td>
-                    </tr>
+                const className = cObj ? cObj.name : 'Unknown Class';
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition";
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-semibold text-slate-900">${className}</td>
+                    <td class="py-3 px-4 text-indigo-700 font-semibold">${ta.subjectName}</td>
+                    <td class="py-3 px-4 text-slate-700">${ta.teacherName}</td>
+                    <td class="py-3 px-4 text-right">
+                        <button onclick="deleteAssignment('${ta.id}')" class="text-red-500 hover:text-red-700 p-1.5 rounded-lg transition" title="Remove Assignment"><i class="fa-solid fa-trash"></i></button>
+                    </td>
                 `;
+                tbody.appendChild(tr);
             });
         }
 
         function renderTeacherMarkLists() {
             const tbody = document.getElementById('teacherMarkListsTableBody');
-            if (!tbody) return;
             tbody.innerHTML = '';
+
             const teacherAssignments = appState.teachingAssignments.filter(ta => ta.teacherId === appState.currentUser.id);
-            document.getElementById('teacherMarkListCount').textContent = `${teacherAssignments.length} Mark Lists`;
+            document.getElementById('teacherMarkListCount').textContent = `${teacherAssignments.length} Assigned Mark Lists`;
+
+            if (teacherAssignments.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-slate-400">You do not have any assigned classes or subjects yet. Contact Department Head.</td></tr>`;
+                return;
+            }
 
             teacherAssignments.forEach(ta => {
                 const cObj = appState.classes.find(c => c.id === ta.classId);
+                const className = cObj ? cObj.name : 'Class';
+                const studentCount = appState.students.filter(s => s.classId === ta.classId).length;
                 const mlId = `ml_${ta.classId}_${ta.subjectId}`;
                 const ml = appState.markLists.find(m => m.id === mlId);
                 const reported = ml ? ml.reported : false;
 
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50 transition">
-                        <td class="py-3 px-4 font-semibold text-slate-900">${cObj ? cObj.name : ''}</td>
-                        <td class="py-3 px-4 text-emerald-700 font-medium">${ta.subjectName}</td>
-                        <td class="py-3 px-4 text-slate-600">${appState.students.filter(s => s.classId === ta.classId).length} Students</td>
-                        <td class="py-3 px-4"><span class="bg-${reported ? 'emerald' : 'amber'}-50 text-${reported ? 'emerald' : 'amber'}-700 font-semibold px-2.5 py-1 rounded-full text-xs">${reported ? 'Submitted' : 'Draft'}</span></td>
-                        <td class="py-3 px-4 text-right">
-                            <button onclick="openMarkListModal('${mlId}')" class="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-semibold px-3 py-1.5 rounded-lg text-xs transition">
-                                <i class="fa-solid fa-pen-to-square mr-1"></i> Open Mark List
-                            </button>
-                        </td>
-                    </tr>
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition";
+                const statusBadge = reported
+                    ? `<span class="bg-emerald-50 text-emerald-700 font-semibold px-2.5 py-1 rounded-full text-xs">Submitted</span>`
+                    : `<span class="bg-amber-50 text-amber-700 font-semibold px-2.5 py-1 rounded-full text-xs">Draft</span>`;
+
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-semibold text-slate-900">${className}</td>
+                    <td class="py-3 px-4 text-emerald-700 font-medium">${ta.subjectName}</td>
+                    <td class="py-3 px-4 text-slate-600">${studentCount} Enrolled Students</td>
+                    <td class="py-3 px-4">${statusBadge}</td>
+                    <td class="py-3 px-4 text-right">
+                        <button onclick="openMarkListModal('${mlId}')" class="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-semibold px-3 py-1.5 rounded-lg text-xs transition">
+                            <i class="fa-solid fa-pen-to-square mr-1"></i> Open & Enter Scores
+                        </button>
+                    </td>
                 `;
+                tbody.appendChild(tr);
             });
         }
 
         function renderAdminMarkLists() {
             const tbody = document.getElementById('adminMarkListsTableBody');
-            if (!tbody) return;
+            const filterTeacherId = document.getElementById('adminFilterTeacher').value;
             tbody.innerHTML = '';
-            appState.markLists.forEach(ml => {
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50 transition">
-                        <td class="py-3 px-4 font-semibold text-slate-900">${ml.className}</td>
-                        <td class="py-3 px-4 text-indigo-600 font-medium">${ml.subjectName}</td>
-                        <td class="py-3 px-4 text-slate-600">${ml.teacherName}</td>
-                        <td class="py-3 px-4 text-slate-600">${appState.students.filter(s => s.classId === ml.classId).length} Students</td>
-                        <td class="py-3 px-4"><span class="bg-${ml.reported ? 'emerald' : 'amber'}-50 text-${ml.reported ? 'emerald' : 'amber'}-700 font-semibold px-2.5 py-1 rounded-full text-xs">${ml.reported ? 'Submitted' : 'Draft'}</span></td>
-                        <td class="py-3 px-4 text-right">
-                            <button onclick="openMarkListModal('${ml.id}')" class="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-semibold px-3 py-1.5 rounded-lg text-xs transition">
-                                <i class="fa-solid fa-eye mr-1"></i> View Scores
-                            </button>
-                        </td>
-                    </tr>
+
+            let list = appState.markLists;
+            if (filterTeacherId) {
+                list = list.filter(ml => ml.teacherId === filterTeacherId);
+            }
+
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-slate-400">No mark lists available.</td></tr>`;
+                return;
+            }
+
+            list.forEach(ml => {
+                const studentCount = appState.students.filter(s => s.classId === ml.classId).length;
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition";
+                const statusBadge = ml.reported
+                    ? `<span class="bg-emerald-50 text-emerald-700 font-semibold px-2.5 py-1 rounded-full text-xs">Submitted</span>`
+                    : `<span class="bg-amber-50 text-amber-700 font-semibold px-2.5 py-1 rounded-full text-xs">Draft</span>`;
+
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-semibold text-slate-900">${ml.className}</td>
+                    <td class="py-3 px-4 text-indigo-600 font-medium">${ml.subjectName}</td>
+                    <td class="py-3 px-4 text-slate-600">${ml.teacherName}</td>
+                    <td class="py-3 px-4 text-slate-600">${studentCount} Students</td>
+                    <td class="py-3 px-4">${statusBadge}</td>
+                    <td class="py-3 px-4 text-right">
+                        <button onclick="openMarkListModal('${ml.id}')" class="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-semibold px-3 py-1.5 rounded-lg text-xs transition">
+                            <i class="fa-solid fa-eye mr-1"></i> View Scores
+                        </button>
+                    </td>
                 `;
+                tbody.appendChild(tr);
             });
         }
 
-        // Modal Mark Lists & Weight Validator
+        // Modal: Mark List & Score Input
         function openMarkListModal(id) {
             appState.activeMarkListId = id;
             let ml = appState.markLists.find(m => m.id === id);
             if (!ml) return;
 
             const isAdmin = appState.currentUser && appState.currentUser.role === 'admin';
+
             document.getElementById('modalMarkListTitle').textContent = `${ml.className} - ${ml.subjectName}`;
             document.getElementById('modalSubjectBadge').textContent = ml.subjectName;
+            document.getElementById('modalSubHeading').textContent = `Teacher: ${ml.teacherName} | Managed class assessments & scores`;
 
             if (isAdmin) {
                 document.getElementById('modalReadOnlyNotice').classList.remove('hidden');
@@ -1560,6 +1499,8 @@
 
             renderAssessmentChips(ml);
             renderModalStudents();
+            updateModalReportStatusBadge(ml);
+
             document.getElementById('markListDetailModal').classList.remove('hidden');
         }
 
@@ -1576,26 +1517,16 @@
 
             ml.assessments.forEach(ass => {
                 totalMax += ass.maxMark;
-                container.innerHTML += `
-                    <div class="bg-white border border-slate-200 shadow-sm rounded-lg px-3 py-1.5 flex items-center space-x-2 text-xs font-semibold text-slate-700">
-                        <span>${ass.title} (${ass.maxMark} pts)</span>
-                        ${!isAdmin ? `<button onclick="removeAssessment('${ass.id}')" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-xmark"></i></button>` : ''}
-                    </div>
+                const chip = document.createElement('div');
+                chip.className = "bg-white border border-slate-200 shadow-sm rounded-lg px-3 py-1.5 flex items-center space-x-2 text-xs font-semibold text-slate-700";
+                chip.innerHTML = `
+                    <span>${ass.title} (${ass.maxMark} pts)</span>
+                    ${!isAdmin ? `<button onclick="removeAssessment('${ass.id}')" class="text-slate-400 hover:text-red-500 transition"><i class="fa-solid fa-xmark"></i></button>` : ''}
                 `;
+                container.appendChild(chip);
             });
 
-            const badge = document.getElementById('assessmentsTotalWeightBadge');
-            badge.textContent = `Total Max Score: ${totalMax} Points`;
-            badge.className = totalMax === 100 
-                ? 'text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700' 
-                : 'text-xs font-bold px-2.5 py-1 rounded-full bg-amber-50 text-amber-700';
-
-            const warning = document.getElementById('weightWarning');
-            if (totalMax > 100) {
-                warning.classList.remove('hidden');
-            } else {
-                warning.classList.add('hidden');
-            }
+            document.getElementById('assessmentsTotalWeightBadge').textContent = `Total Max Score: ${totalMax} Points`;
         }
 
         function handleAddAssessment(e) {
@@ -1606,14 +1537,9 @@
             const title = document.getElementById('newAssessTitle').value.trim();
             const maxMark = parseFloat(document.getElementById('newAssessMax').value) || 10;
 
-            const currentTotal = ml.assessments.reduce((sum, a) => sum + a.maxMark, 0);
-            if (currentTotal + maxMark > 100) {
-                if (!confirm(`Warning: Adding this assessment brings the total max score to ${currentTotal + maxMark} (exceeding 100%). Proceed anyway?`)) {
-                    return;
-                }
-            }
+            const newAss = { id: 'a_' + Date.now(), title, maxMark };
+            ml.assessments.push(newAss);
 
-            ml.assessments.push({ id: 'a_' + Date.now(), title, maxMark });
             saveState();
             renderAssessmentChips(ml);
             renderModalStudents();
@@ -1623,6 +1549,7 @@
         function removeAssessment(assId) {
             const ml = appState.markLists.find(m => m.id === appState.activeMarkListId);
             if (!ml) return;
+
             ml.assessments = ml.assessments.filter(a => a.id !== assId);
             saveState();
             renderAssessmentChips(ml);
@@ -1632,6 +1559,7 @@
         function updateAssessmentScore(studentId, assId, scoreVal, maxMark) {
             const ml = appState.markLists.find(m => m.id === appState.activeMarkListId);
             if (!ml) return;
+
             if (!ml.grades) ml.grades = {};
             if (!ml.grades[studentId]) ml.grades[studentId] = { marks: {}, customGrade: '' };
 
@@ -1647,8 +1575,10 @@
         function updateCustomGrade(studentId, gradeVal) {
             const ml = appState.markLists.find(m => m.id === appState.activeMarkListId);
             if (!ml) return;
+
             if (!ml.grades) ml.grades = {};
             if (!ml.grades[studentId]) ml.grades[studentId] = { marks: {}, customGrade: '' };
+
             ml.grades[studentId].customGrade = gradeVal.trim();
             saveState();
         }
@@ -1659,46 +1589,92 @@
             const tbody = document.getElementById('modalStudentsTableBody');
             const isAdmin = appState.currentUser && appState.currentUser.role === 'admin';
             tbody.innerHTML = '';
+
             if (!ml) return;
 
+            // Fetch students belonging to this class
             const enrolledStudents = appState.students.filter(s => s.classId === ml.classId);
+
             let headerHTML = `<th class="py-3 px-4 border-b">#</th><th class="py-3 px-4 border-b">የተማሪው ስም</th>`;
-            ml.assessments.forEach(ass => headerHTML += `<th class="py-3 px-3 border-b text-center">${ass.title} (${ass.maxMark})</th>`);
+            ml.assessments.forEach(ass => {
+                headerHTML += `<th class="py-3 px-3 border-b text-center">${ass.title} (${ass.maxMark})</th>`;
+            });
             headerHTML += `<th class="py-3 px-4 border-b text-center">Total Score</th><th class="py-3 px-4 border-b text-center">Grade</th>`;
             headerRow.innerHTML = headerHTML;
+
+            if (enrolledStudents.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="${ml.assessments.length + 4}" class="py-8 text-center text-slate-400">No students registered in this class by Department Head yet.</td></tr>`;
+                return;
+            }
 
             enrolledStudents.forEach((s, idx) => {
                 const scoreObj = calculateStudentScore(s.id, ml);
                 const sGradeData = ml.grades && ml.grades[s.id] ? ml.grades[s.id] : { marks: {} };
 
-                let rowHTML = `<td class="py-3 px-4 text-slate-400 font-mono text-xs">${idx + 1}</td><td class="py-3 px-4 font-semibold text-slate-900">${s.name}</td>`;
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition";
+
+                let rowHTML = `
+                    <td class="py-3 px-4 text-slate-400 font-mono text-xs">${idx + 1}</td>
+                    <td class="py-3 px-4 font-semibold text-slate-900">${s.name}</td>
+                `;
+
                 ml.assessments.forEach(ass => {
                     const score = (sGradeData.marks && sGradeData.marks[ass.id] !== undefined) ? sGradeData.marks[ass.id] : 0;
                     rowHTML += `
                         <td class="py-3 px-2 text-center">
-                            ${isAdmin ? `<span class="font-bold text-slate-700">${score}</span>` : `<input type="number" min="0" max="${ass.maxMark}" step="0.5" value="${score}" onchange="updateAssessmentScore('${s.id}', '${ass.id}', this.value, ${ass.maxMark})" class="bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 w-20 text-center font-bold text-slate-700">`}
+                            ${isAdmin 
+                                ? `<span class="font-bold text-slate-700">${score}</span>`
+                                : `<input type="number" min="0" max="${ass.maxMark}" step="0.5" value="${score}" onchange="updateAssessmentScore('${s.id}', '${ass.id}', this.value, ${ass.maxMark})" class="bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 w-20 text-center font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">`
+                            }
                         </td>
                     `;
                 });
+
                 rowHTML += `
                     <td class="py-3 px-4 text-center font-bold text-indigo-600">${scoreObj.mark}</td>
-                    <td class="py-3 px-4 text-center">${isAdmin ? `<span class="font-bold px-2.5 py-1 rounded-lg text-xs ${getGradeBadgeClass(scoreObj.customGrade)}">${scoreObj.customGrade}</span>` : `<input type="text" value="${scoreObj.customGrade}" onchange="updateCustomGrade('${s.id}', this.value)" class="bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 w-20 text-center font-bold text-xs">`}</td>
+                    <td class="py-3 px-4 text-center">
+                        ${isAdmin 
+                            ? `<span class="font-bold px-2.5 py-1 rounded-lg text-xs ${getGradeBadgeClass(scoreObj.customGrade)}">${scoreObj.customGrade}</span>`
+                            : `<input type="text" value="${scoreObj.customGrade}" onchange="updateCustomGrade('${s.id}', this.value)" class="bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 w-20 text-center font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-xs">`
+                        }
+                    </td>
                 `;
-                tbody.appendChild(tr = `<tr class="hover:bg-slate-50 transition">${rowHTML}</tr>`);
+
+                tr.innerHTML = rowHTML;
+                tbody.appendChild(tr);
             });
+        }
+
+        function updateModalReportStatusBadge(ml) {
+            const badge = document.getElementById('modalReportStatusBadge');
+            const btn = document.getElementById('modalReportBtn');
+
+            if (ml.reported) {
+                badge.className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700";
+                badge.textContent = "Reported to Department Head";
+                if (btn) btn.innerHTML = `<i class="fa-solid fa-arrow-rotate-left"></i><span>Unsubmit Report</span>`;
+            } else {
+                badge.className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-50 text-amber-700";
+                badge.textContent = "Draft / Not Reported";
+                if (btn) btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i><span>Submit Report to Head</span>`;
+            }
         }
 
         function toggleReportMarkList() {
             const ml = appState.markLists.find(m => m.id === appState.activeMarkListId);
             if (!ml) return;
+
             ml.reported = !ml.reported;
             saveState();
-            openMarkListModal(ml.id);
+            updateModalReportStatusBadge(ml);
+            renderTeacherMarkLists();
         }
 
         function downloadMarkListPDF() {
             const ml = appState.markLists.find(m => m.id === appState.activeMarkListId);
             if (!ml) return;
+
             document.getElementById('pdfMlTitle').textContent = `${ml.className} - Mark List`;
             document.getElementById('pdfMlSubject').textContent = `Subject: ${ml.subjectName}`;
             document.getElementById('pdfMlTeacher').textContent = ml.teacherName;
@@ -1706,24 +1682,50 @@
 
             const tbody = document.getElementById('pdfMlTableBody');
             tbody.innerHTML = '';
-            appState.students.filter(s => s.classId === ml.classId).forEach((s, idx) => {
+
+            const enrolledStudents = appState.students.filter(s => s.classId === ml.classId);
+
+            enrolledStudents.forEach((s, idx) => {
                 const scoreObj = calculateStudentScore(s.id, ml);
-                tbody.innerHTML += `<tr><td class="border p-2 text-center">${idx + 1}</td><td class="border p-2 font-semibold">${s.name}</td><td class="border p-2 text-center font-bold">${scoreObj.mark}</td><td class="border p-2 text-center font-bold">${scoreObj.customGrade}</td></tr>`;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="border p-2 text-center">${idx + 1}</td>
+                    <td class="border p-2 font-semibold">${s.name}</td>
+                    <td class="border p-2 text-center font-bold">${scoreObj.mark}</td>
+                    <td class="border p-2 text-center font-bold">${scoreObj.customGrade}</td>
+                `;
+                tbody.appendChild(tr);
             });
 
             const element = document.getElementById('printableMarkListArea');
             element.classList.remove('hidden');
-            html2pdf().from(element).save().then(() => element.classList.add('hidden'));
+
+            const opt = {
+                margin: 0.5,
+                filename: `${ml.className}_${ml.subjectName}_MarkList.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                element.classList.add('hidden');
+            });
         }
 
-        // Report Cards
         function populateReportCardDropdowns() {
             const classSelect = document.getElementById('reportCardClassSelect');
-            if (!classSelect) return;
-            const val = classSelect.value;
+            const currentClassVal = classSelect.value;
             classSelect.innerHTML = '<option value="">-- Choose Class --</option>';
-            appState.classes.forEach(c => classSelect.innerHTML += `<option value="${c.id}">${c.name}</option>`);
-            classSelect.value = val;
+
+            appState.classes.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.id;
+                opt.textContent = c.name;
+                if (c.id === currentClassVal) opt.selected = true;
+                classSelect.appendChild(opt);
+            });
+
             populateStudentsForReportCard();
         }
 
@@ -1733,80 +1735,127 @@
         }
 
         function populateStudentsForReportCard() {
-            const classSelect = document.getElementById('reportCardClassSelect');
+            const classId = document.getElementById('reportCardClassSelect').value;
             const studentSelect = document.getElementById('reportCardStudentSelect');
-            if (!classSelect || !studentSelect) return;
-            const classId = classSelect.value;
             studentSelect.innerHTML = '<option value="">-- Choose Student --</option>';
+
             if (!classId) return;
-            appState.students.filter(s => s.classId === classId).forEach(s => {
-                studentSelect.innerHTML += `<option value="${s.id}">${s.name}</option>`;
+
+            const classStudents = appState.students.filter(s => s.classId === classId);
+            classStudents.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s.id;
+                opt.textContent = s.name;
+                studentSelect.appendChild(opt);
             });
         }
 
         function generateStudentReportCard() {
-            const classSelect = document.getElementById('reportCardClassSelect');
-            const studentSelect = document.getElementById('reportCardStudentSelect');
-            if (!classSelect || !studentSelect) return;
-            const classId = classSelect.value;
-            const studentId = studentSelect.value;
+            const classId = document.getElementById('reportCardClassSelect').value;
+            const studentId = document.getElementById('reportCardStudentSelect').value;
             const container = document.getElementById('reportCardContainer');
             const emptyState = document.getElementById('reportCardEmpty');
 
             if (!classId || !studentId) {
-                if (container) container.classList.add('hidden');
-                if (emptyState) emptyState.classList.remove('hidden');
+                container.classList.add('hidden');
+                emptyState.classList.remove('hidden');
                 return;
             }
 
-            const targetStudent = appState.students.find(s => s.id === studentId);
             const targetClass = appState.classes.find(c => c.id === classId);
+            const targetStudent = appState.students.find(s => s.id === studentId);
+            const classStudents = appState.students.filter(s => s.classId === classId);
             const classMarkLists = appState.markLists.filter(ml => ml.classId === classId);
 
+            // Compute rankings for all students in class across subjects
+            const classStudentAveragesMap = {};
+            classStudents.forEach(st => {
+                classStudentAveragesMap[st.id] = { total: 0, count: 0, name: st.name };
+                classMarkLists.forEach(ml => {
+                    const scoreObj = calculateStudentScore(st.id, ml);
+                    classStudentAveragesMap[st.id].total += scoreObj.mark;
+                    classStudentAveragesMap[st.id].count += 1;
+                });
+            });
+
+            const classRankings = Object.keys(classStudentAveragesMap).map(sKey => {
+                const item = classStudentAveragesMap[sKey];
+                return {
+                    studentId: sKey,
+                    avg: item.count > 0 ? item.total / item.count : 0
+                };
+            }).sort((a, b) => b.avg - a.avg);
+
+            const targetStudentRankIndex = classRankings.findIndex(r => r.studentId === studentId);
+            const rankText = targetStudentRankIndex !== -1 ? `#${targetStudentRankIndex + 1} of ${classRankings.length}` : 'N/A';
+
+            let studentRecords = [];
             let totalMarks = 0;
-            let records = [];
+
             classMarkLists.forEach(ml => {
                 const scoreObj = calculateStudentScore(studentId, ml);
-                records.push({ subject: ml.subjectName, teacher: ml.teacherName, mark: scoreObj.mark, grade: scoreObj.customGrade });
+                studentRecords.push({
+                    subject: ml.subjectName,
+                    className: ml.className,
+                    teacher: ml.teacherName,
+                    mark: scoreObj.mark,
+                    grade: scoreObj.customGrade
+                });
                 totalMarks += scoreObj.mark;
             });
 
             document.getElementById('rcIssueDate').textContent = new Date().toLocaleDateString();
             document.getElementById('rcStudentName').textContent = targetStudent ? targetStudent.name : '-';
             document.getElementById('rcClassName').textContent = targetClass ? targetClass.name : '-';
-            document.getElementById('rcTotalSubjects').textContent = records.length;
+            document.getElementById('rcTotalSubjects').textContent = studentRecords.length;
+            document.getElementById('rcClassRank').textContent = rankText;
             
-            const avg = records.length > 0 ? (totalMarks / records.length).toFixed(1) : 0;
+            const avg = studentRecords.length > 0 ? (totalMarks / studentRecords.length).toFixed(1) : 0;
             document.getElementById('rcOverallAverage').textContent = `${avg} / 100 (${getLetterGrade(avg)})`;
-            document.getElementById('rcClassRank').textContent = '#1 of ' + appState.students.filter(s => s.classId === classId).length;
 
             const tbody = document.getElementById('rcMarksTableBody');
             tbody.innerHTML = '';
-            records.forEach(r => {
-                tbody.innerHTML += `
-                    <tr class="border-b border-slate-200">
-                        <td class="py-3 px-4 font-semibold text-slate-900 border-r border-slate-200">${r.subject}</td>
-                        <td class="py-3 px-4 text-slate-600 border-r border-slate-200">${targetClass.name}</td>
-                        <td class="py-3 px-4 text-slate-600 border-r border-slate-200">${r.teacher}</td>
-                        <td class="py-3 px-4 text-center font-bold text-indigo-600 border-r border-slate-200">${r.mark}</td>
-                        <td class="py-3 px-4 text-center"><span class="font-bold px-2.5 py-1 rounded-lg text-xs ${getGradeBadgeClass(r.grade)}">${r.grade}</span></td>
-                    </tr>
-                `;
-            });
+
+            if (studentRecords.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-slate-400">No subject mark lists available for this class yet.</td></tr>`;
+            } else {
+                studentRecords.forEach(rec => {
+                    const tr = document.createElement('tr');
+                    tr.className = "border-b border-slate-200";
+                    tr.innerHTML = `
+                        <td class="py-3 px-4 font-semibold text-slate-900 border-r border-slate-200">${rec.subject}</td>
+                        <td class="py-3 px-4 text-slate-600 border-r border-slate-200">${rec.className}</td>
+                        <td class="py-3 px-4 text-slate-600 border-r border-slate-200">${rec.teacher}</td>
+                        <td class="py-3 px-4 text-center font-bold text-indigo-600 border-r border-slate-200">${rec.mark}</td>
+                        <td class="py-3 px-4 text-center"><span class="font-bold px-2.5 py-1 rounded-lg text-xs ${getGradeBadgeClass(rec.grade)}">${rec.grade}</span></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
 
             container.classList.remove('hidden');
             emptyState.classList.add('hidden');
         }
 
         function downloadStudentReportPDF() {
-            const name = document.getElementById('rcStudentName').textContent;
-            html2pdf().from(document.getElementById('printableReportCard')).save(`${name}_ReportCard.pdf`);
+            const studentName = document.getElementById('rcStudentName').textContent;
+            const element = document.getElementById('printableReportCard');
+
+            const opt = {
+                margin: 0.4,
+                filename: `${studentName}_Official_Report_Card.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, scrollY: 0, useCORS: true },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save();
         }
 
-        window.onload = async function() {
-            await loadStateFromSupabase();
+        window.addEventListener('DOMContentLoaded', () => {
+            loadState();
             checkAuthView();
-        };
+        });
     </script>
 </body>
 </html>
