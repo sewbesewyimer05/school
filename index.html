@@ -845,16 +845,59 @@
             activeMarkListId: null
         };
 
-        function loadState() {
-            const saved = localStorage.getItem('academic_sims_state_pro_v3');
-            if (saved) {
-                try {
-                    appState = JSON.parse(saved);
-                } catch (e) {
-                    console.error('Failed to parse saved state', e);
+        async function loadStateFromSupabase() {
+            if (!supabaseClient) {
+                loadState(); // Fallback to localStorage if offline
+                return;
+            }
+        
+            try {
+                // Fetch all relational data from Supabase in parallel
+                const [
+                    { data: teachers },
+                    { data: classes },
+                    { data: students },
+                    { data: subjects },
+                    { data: teachingAssignments },
+                    { data: markLists }
+                ] = await Promise.all([
+                    supabaseClient.from('teachers').select('*'),
+                    supabaseClient.from('classes').select('*'),
+                    supabaseClient.from('students').select('*'),
+                    supabaseClient.from('subjects').select('*'),
+                    supabaseClient.from('teaching_assignments').select('*'),
+                    supabaseClient.from('mark_lists').select('*')
+                ]);
+        
+                // Update appState with remote database records if available
+                if (teachers) appState.teachers = teachers;
+                if (classes) appState.classes = classes;
+                if (students) appState.students = students;
+                if (subjects) appState.subjects = subjects;
+                if (teachingAssignments) appState.teachingAssignments = teachingAssignments;
+                
+                if (markLists && markLists.length > 0) {
+                    appState.markLists = markLists.map(ml => ({
+                        id: ml.id,
+                        assignmentId: ml.assignment_id,
+                        classId: ml.class_id,
+                        className: appState.classes.find(c => c.id === ml.class_id)?.name || 'Class',
+                        subjectName: ml.subject_name,
+                        teacherId: ml.teacher_id,
+                        teacherName: ml.teacher_name,
+                        reported: ml.reported,
+                        assessments: ml.assessments || [],
+                        grades: ml.grades || {}
+                    }));
                 }
+        
+                console.log('Successfully synced state from Supabase!');
+            } catch (err) {
+                console.error('Failed to load from Supabase, using local cache:', err);
+                loadState();
             }
         }
+
 
         async function saveState() {
             // 1. Save locally for instant UI responsiveness and offline safety
@@ -1069,23 +1112,31 @@
         }
 
         // Teacher Management
-        function handleCreateTeacher(e) {
+        async function handleCreateTeacher(e) {
             e.preventDefault();
             const name = document.getElementById('newTeacherName').value.trim();
             const subject = document.getElementById('newTeacherSubject').value.trim();
             const username = document.getElementById('newTeacherUsername').value.trim();
             const password = document.getElementById('newTeacherPassword').value.trim();
-
-            if (appState.teachers.some(t => t.username === username)) {
-                alert('Username already exists.');
-                return;
+        
+            const newTeacher = { name, subject, username, password };
+        
+            if (supabaseClient) {
+                const { data, error } = await supabaseClient.from('teachers').insert([newTeacher]).select();
+                if (error) {
+                    alert('Error saving to Supabase: ' + error.message);
+                    return;
+                }
+                if (data && data[0]) appState.teachers.push(data[0]);
+            } else {
+                appState.teachers.push({ id: 't_' + Date.now(), ...newTeacher });
             }
-
-            appState.teachers.push({ id: 't_' + Date.now(), name, subject, username, password });
+        
             saveState();
             renderAdminTeachers();
             e.target.reset();
         }
+
 
         function deleteTeacher(teacherId) {
             if (confirm('Are you sure you want to delete this teacher account? (Triggers PostgreSQL audit log)')) {
@@ -1642,8 +1693,8 @@
             html2pdf().from(document.getElementById('printableReportCard')).save(`${name}_ReportCard.pdf`);
         }
 
-        window.onload = function() {
-            loadState();
+        window.onload = async function() {
+            await loadStateFromSupabase();
             checkAuthView();
         };
     </script>
