@@ -786,11 +786,11 @@
         // Supabase Client Initialization (.pro.et deployment config)
         // REPLACE WITH YOUR ACTUAL SUPABASE URL AND REAL PUBLIC ANON KEY FROM SUPABASE DASHBOARD
         const SUPABASE_URL = 'https://sqwhsgfmbvgdkclgfpmy.supabase.co';
-        const SUPABASE_ANON_KEY = 'YOUR_REAL_SUPABASE_ANON_KEY_HERE'; 
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNxd2hzZ2ZtYnZnZGtjbGdmcG15Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5NDU0ODksImV4cCI6MjEwNzUyMTQ4OX0.bG6vIgdVirYcGmh0GfBFfrVFcBIK5abqVWGS6pS3RhA'; 
         
         let supabaseClient = null;
         try {
-            if (window.supabase && SUPABASE_ANON_KEY !== 'YOUR_REAL_SUPABASE_ANON_KEY_HERE') {
+            if (window.supabase && SUPABASE_ANON_KEY !== 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNxd2hzZ2ZtYnZnZGtjbGdmcG15Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5NDU0ODksImV4cCI6MjEwNzUyMTQ4OX0.bG6vIgdVirYcGmh0GfBFfrVFcBIK5abqVWGS6pS3RhA') {
                 supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             }
         } catch (err) {
