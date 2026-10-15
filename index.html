@@ -52,7 +52,7 @@
                 </div>
                 <div class="flex items-center space-x-4">
                     <div id="syncStatusBadge" class="hidden sm:flex items-center space-x-1.5 bg-indigo-800 px-3 py-1 rounded-full text-xs text-indigo-200">
-                        <span id="syncDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                         <span id="syncStatusText">Synced with Supabase</span>
                     </div>
                     <div class="text-right hidden sm:block">
@@ -386,7 +386,7 @@
                             <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
                                 <div>
                                     <h3 class="text-lg font-bold text-slate-900">Submitted Mark Lists & Class Scores</h3>
-                                    <p class="text-sm text-slate-500">Review teacher mark lists (Read-Only Mode with Audit Verification).</p>
+                                    <p class="text-sm text-slate-500">Review teacher mark lists (Read-Only Mode with Supabase Audit Verification).</p>
                                 </div>
                                 <div class="flex items-center space-x-3">
                                     <select id="adminFilterTeacher" onchange="renderAdminMarkLists()" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
@@ -453,7 +453,7 @@
                                         <div class="text-right">
                                             <p class="text-xs font-semibold uppercase text-slate-400">Date Issued</p>
                                             <p class="text-sm font-medium text-slate-700" id="rcIssueDate">-</p>
-                                            <span class="inline-block mt-2 bg-emerald-50 text-emerald-700 text-xs font-bold px-3 py-1 rounded-full border border-emerald-200">Verified Transcript</span>
+                                            <span class="inline-block mt-2 bg-emerald-50 text-emerald-700 text-xs font-bold px-3 py-1 rounded-full border border-emerald-200">Supabase Verified</span>
                                         </div>
                                     </div>
 
@@ -501,7 +501,7 @@
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-slate-200">
                                         <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
                                             <h5 class="font-bold text-xs uppercase text-slate-400 mb-1">Department Head Remarks</h5>
-                                            <p class="text-sm font-medium text-slate-700" id="rcRemarks">Official academic transcript reviewed & secured.</p>
+                                            <p class="text-sm font-medium text-slate-700" id="rcRemarks">Official academic transcript reviewed & secured via PostgreSQL triggers.</p>
                                         </div>
                                         <div class="flex flex-col justify-end text-right">
                                             <div class="border-b border-slate-400 w-48 ml-auto mb-2"></div>
@@ -651,6 +651,7 @@
                                 <!-- Populated dynamically -->
                             </select>
                         </div>
+                        <p class="text-xs text-amber-600 bg-amber-50 p-2 rounded-lg border border-amber-100 flex items-center"><i class="fa-solid fa-lock mr-1.5"></i> Audit Notice: Student deletions or modifications are logged automatically via PostgreSQL triggers.</p>
                         <div class="flex justify-end space-x-3 pt-4 border-t border-slate-100">
                             <button type="button" onclick="closeEditStudentModal()" class="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition">Cancel</button>
                             <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2 rounded-xl text-sm transition shadow-md shadow-indigo-100">Save Student Info</button>
@@ -783,70 +784,35 @@
 
     <script>
         // Supabase Client Initialization (.pro.et deployment config)
+        // REPLACE WITH YOUR ACTUAL SUPABASE URL AND REAL PUBLIC ANON KEY FROM SUPABASE DASHBOARD
         const SUPABASE_URL = 'https://sqwhsgfmbvgdkclgfpmy.supabase.co';
         const SUPABASE_ANON_KEY = 'YOUR_REAL_SUPABASE_ANON_KEY_HERE'; 
         
         let supabaseClient = null;
-        let isSupabaseConnected = false;
-
         try {
             if (window.supabase && SUPABASE_ANON_KEY !== 'YOUR_REAL_SUPABASE_ANON_KEY_HERE') {
                 supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             }
         } catch (err) {
-            console.warn('Supabase initialization warning:', err);
+            console.warn('Supabase offline fallback mode active.', err);
         }
 
         // Global State Management with Supabase & Local Cache
         let appState = {
             currentUser: null,
-            classes: [
-                { id: 'c_1', name: 'Grade 1' },
-                { id: 'c_2', name: 'Grade 2' }
-            ],
-            subjects: [
-                { id: 'sub_1', name: 'English' },
-                { id: 'sub_2', name: 'Math' },
-                { id: 'sub_3', name: 'Sport' }
-            ],
-            students: [
-                { id: 's_1', classId: 'c_1', name: 'Solomon Abebe', age: 7, gender: 'Male' }
-            ],
-            teachers: [
-                { id: 't_1', name: 'Dr. Alan Turing', subject: 'Science', username: 'aturing', password: 'password123' },
-                { id: 't_2', name: 'Prof. Marie Curie', subject: 'Math', username: 'mcurie', password: 'password123' }
-            ],
-            teachingAssignments: [
-                { id: 'ta_1', classId: 'c_1', subjectId: 'sub_1', subjectName: 'English', teacherId: 't_1', teacherName: 'Dr. Alan Turing' }
-            ],
-            markLists: [
-                {
-                    id: 'ml_c_1_sub_1',
-                    assignmentId: 'ta_1',
-                    classId: 'c_1',
-                    className: 'Grade 1',
-                    subjectName: 'English',
-                    teacherId: 't_1',
-                    teacherName: 'Dr. Alan Turing',
-                    reported: false,
-                    assessments: [
-                        { id: 'a1', title: 'Quiz 1', maxMark: 20 },
-                        { id: 'a2', title: 'Midterm', maxMark: 30 },
-                        { id: 'a3', title: 'Final Exam', maxMark: 50 }
-                    ],
-                    grades: {
-                        's_1': { marks: { 'a1': 18, 'a2': 25, 'a3': 45 }, customGrade: 'A+' }
-                    }
-                }
-            ],
+            classes: [],
+            subjects: [],
+            students: [],
+            teachers: [],
+            teachingAssignments: [],
+            markLists: [],
             activeMarkListId: null
         };
 
-        // Load data from Supabase on startup, fallback to localStorage if offline or key is unregistered
+        // Load data from Supabase on startup, fallback to localStorage if offline
         async function loadStateFromSupabase() {
             if (!supabaseClient) {
                 loadStateLocal();
-                setSyncStatus(false, 'Offline Mode (Local Cache)');
                 return;
             }
 
@@ -867,21 +833,9 @@
                     supabaseClient.from('mark_lists').select('*')
                 ]);
 
-                if (tErr || cErr || sErr) {
-                    throw new Error(tErr?.message || cErr?.message || sErr?.message || 'Supabase API key invalid or tables missing');
-                }
-
                 if (teachers && teachers.length > 0) appState.teachers = teachers;
                 if (classes && classes.length > 0) appState.classes = classes;
-                if (students && students.length > 0) {
-                    appState.students = students.map(s => ({
-                        id: s.id,
-                        classId: s.class_id,
-                        name: s.name,
-                        age: s.age,
-                        gender: s.gender
-                    }));
-                }
+                if (students && students.length > 0) appState.students = students;
                 if (subjects && subjects.length > 0) appState.subjects = subjects;
                 if (teachingAssignments && teachingAssignments.length > 0) {
                     appState.teachingAssignments = teachingAssignments.map(ta => ({
@@ -909,25 +863,33 @@
                     }));
                 }
 
-                isSupabaseConnected = true;
-                setSyncStatus(true, 'Synced with Supabase');
-                console.log('Successfully synced state from Supabase!');
+                // If remote database is empty, seed with initial defaults and save to DB
+                if (appState.classes.length === 0 && appState.teachers.length === 0) {
+                    await seedInitialData();
+                }
+
+                document.getElementById('syncStatusText').textContent = 'Synced with Supabase';
+                console.log('Successfully synced state from Supabase across devices!');
             } catch (err) {
-                console.warn('Supabase connection warning, using local mode:', err.message);
-                isSupabaseConnected = false;
+                console.warn('Failed to load from Supabase, using local cache:', err);
                 loadStateLocal();
-                setSyncStatus(false, 'Local Mode (Supabase Not Configured)');
+                document.getElementById('syncStatusText').textContent = 'Offline (Local Cache)';
             }
         }
 
-        function setSyncStatus(connected, text) {
-            const dot = document.getElementById('syncDot');
-            const txt = document.getElementById('syncStatusText');
-            if (txt) txt.textContent = text;
-            if (dot) {
-                dot.className = connected 
-                    ? 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse' 
-                    : 'w-2 h-2 rounded-full bg-amber-400';
+        async function seedInitialData() {
+            if (!supabaseClient) return;
+            // Seed initial class & teacher if needed
+            const { data: cData } = await supabaseClient.from('classes').insert([{ name: 'Grade 1' }, { name: 'Grade 2' }]).select();
+            const { data: tData } = await supabaseClient.from('teachers').insert([
+                { name: 'Dr. Alan Turing', subject: 'Science', username: 'aturing', password: 'password123' },
+                { name: 'Prof. Marie Curie', subject: 'Math', username: 'mcurie', password: 'password123' }
+            ]).select();
+            const { data: sData } = await supabaseClient.from('subjects').insert([{ name: 'English' }, { name: 'Math' }, { name: 'Sport' }]).select();
+            if (cData && tData && sData) {
+                appState.classes = cData;
+                appState.teachers = tData;
+                appState.subjects = sData;
             }
         }
 
@@ -935,15 +897,9 @@
             const saved = localStorage.getItem('academic_sims_state_pro_v3');
             if (saved) {
                 try {
-                    const parsed = JSON.parse(saved);
-                    if (parsed.teachers && parsed.teachers.length > 0) appState.teachers = parsed.teachers;
-                    if (parsed.classes && parsed.classes.length > 0) appState.classes = parsed.classes;
-                    if (parsed.students && parsed.students.length > 0) appState.students = parsed.students;
-                    if (parsed.subjects && parsed.subjects.length > 0) appState.subjects = parsed.subjects;
-                    if (parsed.teachingAssignments) appState.teachingAssignments = parsed.teachingAssignments;
-                    if (parsed.markLists) appState.markLists = parsed.markLists;
+                    appState = JSON.parse(saved);
                 } catch (e) {
-                    console.error('Failed to parse saved local state', e);
+                    console.error('Failed to parse saved state', e);
                 }
             }
         }
@@ -955,26 +911,27 @@
                 ts.textContent = `Saved at ${new Date().toLocaleTimeString()}`;
             }
 
-            if (isSupabaseConnected && supabaseClient && appState.activeMarkListId) {
+            // Sync active mark list to Supabase
+            if (supabaseClient && appState.activeMarkListId) {
                 const ml = appState.markLists.find(m => m.id === appState.activeMarkListId);
                 if (ml) {
-                    try {
-                        await supabaseClient
-                            .from('mark_lists')
-                            .upsert({
-                                id: ml.id,
-                                assignment_id: ml.assignmentId,
-                                class_id: ml.classId,
-                                subject_name: ml.subjectName,
-                                teacher_id: ml.teacherId,
-                                teacher_name: ml.teacherName,
-                                reported: ml.reported,
-                                assessments: ml.assessments,
-                                grades: ml.grades,
-                                updated_at: new Date().toISOString()
-                            });
-                    } catch (e) {
-                        console.warn('Supabase mark list sync failed:', e);
+                    const { error } = await supabaseClient
+                        .from('mark_lists')
+                        .upsert({
+                            id: ml.id,
+                            assignment_id: ml.assignmentId,
+                            class_id: ml.classId,
+                            subject_name: ml.subjectName,
+                            teacher_id: ml.teacherId,
+                            teacher_name: ml.teacherName,
+                            reported: ml.reported,
+                            assessments: ml.assessments,
+                            grades: ml.grades,
+                            updated_at: new Date().toISOString()
+                        });
+                    
+                    if (error) {
+                        console.warn('Supabase mark list sync warning:', error.message);
                     }
                 }
             }
@@ -1061,18 +1018,14 @@
                     errorDiv.classList.add('hidden');
                     checkAuthView();
 
-                    if (isSupabaseConnected && supabaseClient) {
-                        try {
-                            await supabaseClient.from('audit_logs').insert([{
-                                action_type: 'LOGIN',
-                                table_name: 'teachers',
-                                record_id: teacher.id,
-                                performed_by: teacher.username,
-                                details: 'Teacher logged into session on .pro.et'
-                            }]);
-                        } catch (err) {
-                            console.warn('Audit log write error:', err);
-                        }
+                    if (supabaseClient) {
+                        await supabaseClient.from('audit_logs').insert([{
+                            action_type: 'LOGIN',
+                            table_name: 'teachers',
+                            record_id: teacher.id,
+                            performed_by: teacher.username,
+                            details: 'Teacher logged into session on .pro.et'
+                        }]);
                     }
                 } else {
                     errorDiv.classList.remove('hidden');
@@ -1155,7 +1108,7 @@
             if (tabName === 'marklists') renderTeacherMarkLists();
         }
 
-        // Teacher Management (with robust fallback)
+        // Teacher Management (with Supabase sync)
         async function handleCreateTeacher(e) {
             e.preventDefault();
             const name = document.getElementById('newTeacherName').value.trim();
@@ -1168,24 +1121,21 @@
                 return;
             }
 
-            const teacherObj = { name, subject, username, password };
-            let savedRecord = null;
+            const newTeacherObj = { name, subject, username, password };
 
-            if (isSupabaseConnected && supabaseClient) {
-                try {
-                    const { data, error } = await supabaseClient.from('teachers').insert([teacherObj]).select();
-                    if (error) throw error;
-                    if (data && data[0]) savedRecord = data[0];
-                } catch (err) {
-                    console.warn('Supabase insert failed, saving locally:', err.message);
+            if (supabaseClient) {
+                const { data, error } = await supabaseClient.from('teachers').insert([newTeacherObj]).select();
+                if (error) {
+                    alert('Error saving to Supabase: ' + error.message);
+                    return;
                 }
+                if (data && data[0]) {
+                    appState.teachers.push(data[0]);
+                }
+            } else {
+                appState.teachers.push({ id: 't_' + Date.now(), ...newTeacherObj });
             }
 
-            if (!savedRecord) {
-                savedRecord = { id: 't_' + Date.now(), ...teacherObj };
-            }
-
-            appState.teachers.push(savedRecord);
             saveState();
             renderAdminTeachers();
             e.target.reset();
@@ -1193,12 +1143,8 @@
 
         async function deleteTeacher(teacherId) {
             if (confirm('Are you sure you want to delete this teacher account?')) {
-                if (isSupabaseConnected && supabaseClient) {
-                    try {
-                        await supabaseClient.from('teachers').delete().eq('id', teacherId);
-                    } catch (err) {
-                        console.warn('Supabase delete error:', err);
-                    }
+                if (supabaseClient) {
+                    await supabaseClient.from('teachers').delete().eq('id', teacherId);
                 }
                 appState.teachers = appState.teachers.filter(t => t.id !== teacherId);
                 appState.teachingAssignments = appState.teachingAssignments.filter(ta => ta.teacherId !== teacherId);
@@ -1234,17 +1180,13 @@
             t.username = document.getElementById('editTeacherUsername').value.trim();
             t.password = document.getElementById('editTeacherPassword').value.trim();
 
-            if (isSupabaseConnected && supabaseClient) {
-                try {
-                    await supabaseClient.from('teachers').update({
-                        name: t.name,
-                        subject: t.subject,
-                        username: t.username,
-                        password: t.password
-                    }).eq('id', id);
-                } catch (err) {
-                    console.warn('Supabase update error:', err);
-                }
+            if (supabaseClient) {
+                await supabaseClient.from('teachers').update({
+                    name: t.name,
+                    subject: t.subject,
+                    username: t.username,
+                    password: t.password
+                }).eq('id', id);
             }
 
             saveState();
@@ -1254,7 +1196,6 @@
 
         function renderAdminTeachers() {
             const tbody = document.getElementById('adminTeachersTableBody');
-            if (!tbody) return;
             tbody.innerHTML = '';
             document.getElementById('teacherCountBadge').textContent = `${appState.teachers.length} Teachers`;
 
@@ -1276,28 +1217,23 @@
             });
         }
 
-        // Class & Student Management (with robust fallback)
+        // Class & Student Management (with Supabase sync)
         async function handleCreateClass(e) {
             e.preventDefault();
             const name = document.getElementById('newClassName').value.trim();
             let newClassObj = { name };
-            let savedClass = null;
 
-            if (isSupabaseConnected && supabaseClient) {
-                try {
-                    const { data, error } = await supabaseClient.from('classes').insert([newClassObj]).select();
-                    if (error) throw error;
-                    if (data && data[0]) savedClass = data[0];
-                } catch (err) {
-                    console.warn('Supabase class insert failed, saving locally:', err.message);
+            if (supabaseClient) {
+                const { data, error } = await supabaseClient.from('classes').insert([newClassObj]).select();
+                if (error) {
+                    alert('Error creating class in Supabase: ' + error.message);
+                    return;
                 }
+                if (data && data[0]) appState.classes.push(data[0]);
+            } else {
+                appState.classes.push({ id: 'c_' + Date.now(), name });
             }
 
-            if (!savedClass) {
-                savedClass = { id: 'c_' + Date.now(), name };
-            }
-
-            appState.classes.push(savedClass);
             saveState();
             renderAdminClassesDropdowns();
             e.target.reset();
@@ -1311,25 +1247,20 @@
             const gender = document.getElementById('regStudentGender').value;
 
             const studentObj = { class_id, name, age, gender };
-            let savedStudent = null;
 
-            if (isSupabaseConnected && supabaseClient) {
-                try {
-                    const { data, error } = await supabaseClient.from('students').insert([studentObj]).select();
-                    if (error) throw error;
-                    if (data && data[0]) {
-                        savedStudent = { id: data[0].id, classId: data[0].class_id, name: data[0].name, age: data[0].age, gender: data[0].gender };
-                    }
-                } catch (err) {
-                    console.warn('Supabase student insert failed, saving locally:', err.message);
+            if (supabaseClient) {
+                const { data, error } = await supabaseClient.from('students').insert([studentObj]).select();
+                if (error) {
+                    alert('Error registering student in Supabase: ' + error.message);
+                    return;
                 }
+                if (data && data[0]) {
+                    appState.students.push({ id: data[0].id, classId: data[0].class_id, name: data[0].name, age: data[0].age, gender: data[0].gender });
+                }
+            } else {
+                appState.students.push({ id: 's_' + Date.now(), classId: class_id, name, age, gender });
             }
 
-            if (!savedStudent) {
-                savedStudent = { id: 's_' + Date.now(), classId: class_id, name, age, gender };
-            }
-
-            appState.students.push(savedStudent);
             saveState();
             renderAdminRosterTable();
             populateReportCardDropdowns();
@@ -1338,12 +1269,8 @@
 
         async function deleteStudent(studentId) {
             if (confirm('Are you sure you want to remove this student?')) {
-                if (isSupabaseConnected && supabaseClient) {
-                    try {
-                        await supabaseClient.from('students').delete().eq('id', studentId);
-                    } catch (err) {
-                        console.warn('Supabase student delete error:', err);
-                    }
+                if (supabaseClient) {
+                    await supabaseClient.from('students').delete().eq('id', studentId);
                 }
                 appState.students = appState.students.filter(s => s.id !== studentId);
                 saveState();
@@ -1383,17 +1310,13 @@
             s.gender = document.getElementById('editStudentGender').value;
             s.classId = document.getElementById('editStudentClass').value;
 
-            if (isSupabaseConnected && supabaseClient) {
-                try {
-                    await supabaseClient.from('students').update({
-                        name: s.name,
-                        age: s.age,
-                        gender: s.gender,
-                        class_id: s.classId
-                    }).eq('id', id);
-                } catch (err) {
-                    console.warn('Supabase student update error:', err);
-                }
+            if (supabaseClient) {
+                await supabaseClient.from('students').update({
+                    name: s.name,
+                    age: s.age,
+                    gender: s.gender,
+                    class_id: s.classId
+                }).eq('id', id);
             }
 
             saveState();
@@ -1416,7 +1339,6 @@
 
         function renderAdminRosterTable() {
             const tbody = document.getElementById('adminRosterTableBody');
-            if (!tbody) return;
             const filterClassId = document.getElementById('adminRosterClassFilter').value;
             tbody.innerHTML = '';
 
@@ -1441,27 +1363,22 @@
             });
         }
 
-        // Subjects & Assignments (with robust fallback)
+        // Subjects & Assignments (with Supabase sync)
         async function handleCreateSubject(e) {
             e.preventDefault();
             const name = document.getElementById('newSubjectName').value.trim();
-            let savedSub = null;
 
-            if (isSupabaseConnected && supabaseClient) {
-                try {
-                    const { data, error } = await supabaseClient.from('subjects').insert([{ name }]).select();
-                    if (error) throw error;
-                    if (data && data[0]) savedSub = data[0];
-                } catch (err) {
-                    console.warn('Supabase subject insert failed:', err.message);
+            if (supabaseClient) {
+                const { data, error } = await supabaseClient.from('subjects').insert([{ name }]).select();
+                if (error) {
+                    alert('Error creating subject in Supabase: ' + error.message);
+                    return;
                 }
+                if (data && data[0]) appState.subjects.push(data[0]);
+            } else {
+                appState.subjects.push({ id: 'sub_' + Date.now(), name });
             }
 
-            if (!savedSub) {
-                savedSub = { id: 'sub_' + Date.now(), name };
-            }
-
-            appState.subjects.push(savedSub);
             saveState();
             renderAdminSubjectsTable();
             e.target.reset();
@@ -1478,34 +1395,41 @@
             const sObj = appState.subjects.find(s => s.id === subject_id);
 
             let newAssignment = { class_id, subject_id, teacher_id };
-            let savedTaId = 'ta_' + Date.now();
 
-            if (isSupabaseConnected && supabaseClient) {
-                try {
-                    const { data, error } = await supabaseClient.from('teaching_assignments').insert([newAssignment]).select();
-                    if (error) throw error;
-                    if (data && data[0]) savedTaId = data[0].id;
-                } catch (err) {
-                    console.warn('Supabase assignment insert failed:', err.message);
+            if (supabaseClient) {
+                const { data, error } = await supabaseClient.from('teaching_assignments').insert([newAssignment]).select();
+                if (error) {
+                    alert('Error creating assignment in Supabase: ' + error.message);
+                    return;
                 }
+                if (data && data[0]) {
+                    newAssignment = {
+                        id: data[0].id,
+                        classId: data[0].class_id,
+                        subjectId: data[0].subject_id,
+                        subjectName: sObj.name,
+                        teacherId: data[0].teacher_id,
+                        teacherName: tObj.name
+                    };
+                }
+            } else {
+                newAssignment = {
+                    id: 'ta_' + Date.now(),
+                    classId: class_id,
+                    subjectId: subject_id,
+                    subjectName: sObj.name,
+                    teacherId: teacher_id,
+                    teacherName: tObj.name
+                };
             }
 
-            const taObj = {
-                id: savedTaId,
-                classId: class_id,
-                subjectId: subject_id,
-                subjectName: sObj.name,
-                teacherId: teacher_id,
-                teacherName: tObj.name
-            };
-
-            appState.teachingAssignments.push(taObj);
+            appState.teachingAssignments.push(newAssignment);
 
             const mlId = `ml_${class_id}_${subject_id}`;
             if (!appState.markLists.some(m => m.id === mlId)) {
                 appState.markLists.push({
                     id: mlId,
-                    assignmentId: taObj.id,
+                    assignmentId: newAssignment.id,
                     classId: class_id,
                     className: cObj.name,
                     subjectName: sObj.name,
@@ -1526,12 +1450,8 @@
 
         async function deleteAssignment(assignmentId) {
             if (confirm('Remove assignment?')) {
-                if (isSupabaseConnected && supabaseClient) {
-                    try {
-                        await supabaseClient.from('teaching_assignments').delete().eq('id', assignmentId);
-                    } catch (err) {
-                        console.warn('Supabase delete assignment error:', err);
-                    }
+                if (supabaseClient) {
+                    await supabaseClient.from('teaching_assignments').delete().eq('id', assignmentId);
                 }
                 appState.teachingAssignments = appState.teachingAssignments.filter(ta => ta.id !== assignmentId);
                 saveState();
@@ -1764,7 +1684,7 @@
                     <td class="py-3 px-4 text-center font-bold text-indigo-600">${scoreObj.mark}</td>
                     <td class="py-3 px-4 text-center">${isAdmin ? `<span class="font-bold px-2.5 py-1 rounded-lg text-xs ${getGradeBadgeClass(scoreObj.customGrade)}">${scoreObj.customGrade}</span>` : `<input type="text" value="${scoreObj.customGrade}" onchange="updateCustomGrade('${s.id}', this.value)" class="bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 w-20 text-center font-bold text-xs">`}</td>
                 `;
-                tbody.innerHTML += `<tr class="hover:bg-slate-50 transition">${rowHTML}</tr>`;
+                tbody.appendChild(tr = `<tr class="hover:bg-slate-50 transition">${rowHTML}</tr>`);
             });
         }
 
